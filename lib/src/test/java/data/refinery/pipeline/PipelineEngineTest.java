@@ -56,7 +56,7 @@ public class PipelineEngineTest {
         parametersX.setValueOfField(parameterConstant, "X");
 
         SimpleEntity parametersY = new SimpleEntity(AppendConstantCalculation.parameterSchema);
-        parametersX.setValueOfField(parameterConstant, "Y");
+        parametersY.setValueOfField(parameterConstant, "Y");
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
                 AppendConstantCalculation.getInstance(),
@@ -104,7 +104,7 @@ public class PipelineEngineTest {
         assertThat(output.getValueOfField(a0), is("A"));
         assertThat(output.getValueOfField(a1), is("AX"));
         assertThat(output.getValueOfField(a2), is("AXY"));
-        assertThat(output.getValueOfField(b0), is("B0"));
+        assertThat(output.getValueOfField(b0), is("B"));
         assertThat(output.getValueOfField(b1), is("BX"));
         assertThat(output.getValueOfField(b2), is("BXY"));
     }
