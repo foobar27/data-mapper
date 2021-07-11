@@ -4,10 +4,7 @@ import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.Field;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
@@ -69,18 +66,22 @@ public class PipelineEngine {
             if (remainingEnrichments.isEmpty()) {
                 future.complete(result);
             } else {
-                for (Enrichment enrichment : remainingEnrichments) { // TODO just had a ConcurrentModificationException here!
+                Map<Enrichment, CompletableFuture<EntityFieldReadAccessor>> enrichmentFutures = new HashMap<>();
+                for (Enrichment enrichment : remainingEnrichments) {
                     if (knownFields.containsAll(enrichment.getMapping().getLeftMapping().getMapping().keySet())) {
                         // All dependencies satisfied
                         CompletableFuture<EntityFieldReadAccessor> enrichmentFuture = calculationFactory.apply(enrichment.getCalculation())
                                 .wrap(enrichment.getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
                                 .apply(result, enrichment.getParameters());
                         pendingFutures.put(enrichment, enrichmentFuture); // this must be BEFORE the recursion!
-                        enrichmentFuture
-                                // Recursion!
-                                .thenAccept(calculationOutput -> progress(enrichment, calculationOutput)) // TODO specify executor
-                                .exceptionally(this::handleThrowable);
+                        enrichmentFutures.put(enrichment, enrichmentFuture);
                     }
+                }
+                for (Map.Entry<Enrichment, CompletableFuture<EntityFieldReadAccessor>> entry : enrichmentFutures.entrySet()) {
+                    entry.getValue()
+                            // Recursion!
+                            .thenAccept(calculationOutput -> progress(entry.getKey(), calculationOutput)) // TODO specify executor
+                            .exceptionally(this::handleThrowable);
                 }
             }
         }
