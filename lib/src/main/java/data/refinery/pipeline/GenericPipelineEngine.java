@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class GenericPipelineEngine {
+public class GenericPipelineEngine implements PipelineEngine {
 
     private final CalculationFactory calculationFactory;
     private final Supplier<EntityFieldReadWriteAccessor> outputFactory;
