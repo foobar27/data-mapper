@@ -26,14 +26,14 @@ public class FilteringTest {
     public void removeNoFieldsShouldTriggerFastPath() {
         SimpleEntity entity = new SimpleEntity(ExampleSchemata.person);
         EntityFieldReadAccessor filteredEntity = entity.filterFields(Collections.emptySet());
-        assertThat(filteredEntity, instanceOf(SimpleEntity.class));
+        assertThat(filteredEntity, instanceOf(EmptyEntityFieldReadAccessor.class));
     }
 
     @Test
     public void removeAllFieldsShouldTriggerFastPath() {
         SimpleEntity entity = new SimpleEntity(ExampleSchemata.person);
         EntityFieldReadAccessor filteredEntity = entity.filterFields(new HashSet<>(entity.getSchema().getFields()));
-        assertThat(filteredEntity, instanceOf(EmptyEntityFieldReadAccessor.class));
+        assertThat(filteredEntity, instanceOf(SimpleEntity.class));
     }
 
     // TODO verify schema also filtered

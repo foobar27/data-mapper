@@ -3,6 +3,7 @@ package data.refinery.schema;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,6 +16,9 @@ final class FilteredEntityFieldReadAccessor implements EntityFieldReadAccessor {
     public static EntityFieldReadAccessor filterFields(EntityFieldReadAccessor delegate, Set<Field> fields) {
         if (fields.isEmpty()) {
             return EmptyEntityFieldReadAccessor.getInstance();
+        }
+        if (fields.equals(new HashSet<>(delegate.getSchema().getFields()))) {
+            return delegate;
         }
         return new FilteredEntityFieldReadAccessor(delegate, fields);
     }
