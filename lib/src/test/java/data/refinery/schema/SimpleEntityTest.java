@@ -1,6 +1,5 @@
 package data.refinery.schema;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static data.refinery.schema.ExampleSchemata.personFirstName;
@@ -17,7 +16,7 @@ public class SimpleEntityTest {
         assertThat(entity.getValueOfField(personFirstName), is(equalTo(null)));
         entity.setValueOfField(personFirstName, "John");
         assertThat(entity.getValueOfField(personFirstName), is("John"));
-        assertThat(entity.toString(), is("SimpleEntity{schema=NamedEntitySchema{name=Person}, Field[person.firstName]=John}"));
+        assertThat(entity.toString(), is("SimpleEntity{schema=NamedEntitySchema{name=Person, fields=[Field[person.firstName], Field[person.lastName], Field[person.fullName], Field[person.age]]}, Field[person.firstName]=John}"));
         assertThrows(NoSuchFieldException.class, () -> entity.getValueOfField(ExampleSchemata.unusedField));
     }
 
