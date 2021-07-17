@@ -45,4 +45,9 @@ final class FilteredEntityFieldReadAccessor implements EntityFieldReadAccessor {
     public EntityFieldReadAccessor filterFields(Set<Field> fields) {
         return filterFields(delegate, Sets.intersection(this.fields, fields));
     }
+
+    @Override
+    public String toString() {
+        return String.format("FilteredEntityFieldReadAccessor[%s, %s]", delegate, fields);
+    }
 }
