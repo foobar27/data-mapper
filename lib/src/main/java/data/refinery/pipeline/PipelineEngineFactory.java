@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public final class PipelineEngineFactory {
 
@@ -21,25 +20,11 @@ public final class PipelineEngineFactory {
         return new GenericPipelineEngine(enrichments, calculationFactory, outputFactory, executor);
     }
 
-    boolean areIndependent(List<Enrichment> enrichments) {
-        Set<Field> outputFields = enrichments.stream()
-                .flatMap(enrichment ->
-                        enrichment.getMappedCalculation()
-                                .getMapping()
-                                .getLeftMapping()
-                                .getMapping()
-                                .keySet()
-                                .stream())
-                .collect(Collectors.toSet());
-        // Is any output field included in the input fields?
-        return enrichments.stream()
-                .flatMap(enrichment ->
-                        enrichment.getMappedCalculation()
-                                .getMapping()
-                                .getLeftMapping()
-                                .getMapping()
-                                .keySet()
-                                .stream())
+    boolean areIndependent(EnrichmentList enrichments) {
+        Set<Field> inputFields = enrichments.getAllInputFields();
+        Set<Field> outputFields = enrichments.getAllOutputFields();
+        return inputFields
+                .stream()
                 .noneMatch(outputFields::contains);
     }
 
