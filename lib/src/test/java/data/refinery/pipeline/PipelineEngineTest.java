@@ -161,14 +161,14 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
         Stopwatch sw = Stopwatch.createStarted();
-        //for (int i = 0; i < 10000; ++i)
+        PipelineEngine engine = new PipelineEngineFactory()
+                .createPipelineEngine(
+                        enrichments,
+                        calculationFactory,
+                        () -> new SimpleEntity(schema),
+                        MoreExecutors.directExecutor());
+        for (int i = 0; i < 10000; ++i)
         {
-            PipelineEngine engine = new PipelineEngineFactory()
-                    .createPipelineEngine(
-                            enrichments,
-                            calculationFactory,
-                            () -> new SimpleEntity(schema),
-                            MoreExecutors.directExecutor());
             EntityFieldReadAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));

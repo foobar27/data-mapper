@@ -53,7 +53,7 @@ final class GenericPipelineEngine implements PipelineEngine {
             this.enrichmentsTriggered = new BitSet(enrichments.getEnrichments().size());
             this.enrichmentsFinished = new BitSet(enrichments.getEnrichments().size());
             inputEntity.filterFields(knownFields).mergeInto(result);
-            progress() ;
+            progress();
         }
 
         synchronized void progress() {
@@ -64,7 +64,6 @@ final class GenericPipelineEngine implements PipelineEngine {
                     continue;
                 }
                 enrichmentsTriggered.set(enrichmentIndex);
-                // TODO check if already triggered
                 if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                     // All dependencies satisfied
                     pendingFutures.add(() ->
@@ -72,10 +71,11 @@ final class GenericPipelineEngine implements PipelineEngine {
                                     .wrap(enrichment.getMappedCalculation().getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
                                     .apply(result, enrichment.getParameters())) // this must be BEFORE the recursion!
                             // Recursion!
-                            .thenApply(output -> {
-                                finishEnrichment(enrichmentIndex, output);
-                                return null;
-                            }); // TODO specify executor
+                            .thenApplyAsync(output -> {
+                                        finishEnrichment(enrichmentIndex, output);
+                                        return null;
+                                    },
+                                    executor);
                 }
                 ++index;
             }
@@ -88,6 +88,7 @@ final class GenericPipelineEngine implements PipelineEngine {
             if (enrichmentsFinished.cardinality() == enrichments.getEnrichments().size()) {
                 future.complete(result);
             }
+            // TODO only apply recursion if other enrichments depend on this enrichment
             progress();
         }
 
