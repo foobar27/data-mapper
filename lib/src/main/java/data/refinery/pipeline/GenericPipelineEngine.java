@@ -3,6 +3,7 @@ package data.refinery.pipeline;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.Field;
+import data.refinery.utils.AllOrNothingFutureContainer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +43,10 @@ final class GenericPipelineEngine implements PipelineEngine {
         private final EntityFieldReadWriteAccessor result = outputFactory.get();
         private final Set<Field> knownFields;
         private final Set<Enrichment> remainingEnrichments;
-        private final Map<Enrichment, CompletableFuture<EntityFieldReadAccessor>> pendingFutures = new HashMap<>();
+        private final AllOrNothingFutureContainer<EntityFieldReadAccessor> pendingFutures =
+                new AllOrNothingFutureContainer<>(
+                        future::completeExceptionally,
+                        executor);
 
         Process(EntityFieldReadAccessor inputEntity, EnrichmentList enrichments) {
             this.knownFields = new HashSet<>(enrichments.getFixedSchema().getFields());
@@ -54,16 +58,9 @@ final class GenericPipelineEngine implements PipelineEngine {
             progress(null, null);
         }
 
-        synchronized Void handleThrowable(Throwable t) {
-            pendingFutures.values().forEach(x -> x.cancel(false));
-            future.completeExceptionally(t);
-            return null;
-        }
-
         synchronized void progress(Enrichment finishedEnrichment, EntityFieldReadAccessor enrichmentOutput) {
             if (finishedEnrichment != null) {
                 remainingEnrichments.remove(finishedEnrichment);
-                pendingFutures.remove(finishedEnrichment);
             }
             if (enrichmentOutput != null) {
                 knownFields.addAll(enrichmentOutput.getSchema().getFields());
@@ -76,18 +73,17 @@ final class GenericPipelineEngine implements PipelineEngine {
                 for (Enrichment enrichment : remainingEnrichments) {
                     if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                         // All dependencies satisfied
-                        CompletableFuture<EntityFieldReadAccessor> enrichmentFuture = calculationFactory.apply(enrichment.getMappedCalculation().getCalculation())
-                                .wrap(enrichment.getMappedCalculation().getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
-                                .apply(result, enrichment.getParameters());
-                        pendingFutures.put(enrichment, enrichmentFuture); // this must be BEFORE the recursion!
+                        CompletableFuture<EntityFieldReadAccessor> enrichmentFuture = pendingFutures.add(() ->
+                                calculationFactory.apply(enrichment.getMappedCalculation().getCalculation())
+                                        .wrap(enrichment.getMappedCalculation().getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
+                                        .apply(result, enrichment.getParameters()));// this must be BEFORE the recursion!
                         enrichmentFutures.put(enrichment, enrichmentFuture);
                     }
                 }
                 for (Map.Entry<Enrichment, CompletableFuture<EntityFieldReadAccessor>> entry : enrichmentFutures.entrySet()) {
                     entry.getValue()
                             // Recursion!
-                            .thenAccept(calculationOutput -> progress(entry.getKey(), calculationOutput)) // TODO specify executor
-                            .exceptionally(this::handleThrowable);
+                            .thenAccept(calculationOutput -> progress(entry.getKey(), calculationOutput)); // TODO specify executor
                 }
             }
         }
