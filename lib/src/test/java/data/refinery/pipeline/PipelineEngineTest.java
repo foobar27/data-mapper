@@ -28,7 +28,7 @@ public class PipelineEngineTest {
                         new ConcatStringsCalculationImplementation()
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new PipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
+        GenericPipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
                 MoreExecutors.directExecutor());
 
         SimpleEntity person = new SimpleEntity(ExampleSchemata.person);
@@ -109,7 +109,7 @@ public class PipelineEngineTest {
                         new AppendConstantCalculationImplementation()
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new PipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+        GenericPipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
                 MoreExecutors.directExecutor());
         EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
         assertThat(output.getValueOfField(a0), is("A"));
@@ -160,7 +160,7 @@ public class PipelineEngineTest {
         Stopwatch sw = Stopwatch.createStarted();
         //for (int i = 0; i < 10000; ++i)
         {
-            PipelineEngine engine = new PipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+            GenericPipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
                     MoreExecutors.directExecutor());
             EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
