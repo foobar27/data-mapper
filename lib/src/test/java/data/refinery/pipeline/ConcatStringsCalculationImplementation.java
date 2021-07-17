@@ -8,14 +8,9 @@ import static data.refinery.pipeline.ConcatStringsCalculation.*;
 
 public class ConcatStringsCalculationImplementation extends TestableCalculationImplementation {
 
-    private static final ConcatStringsCalculationImplementation instance = new ConcatStringsCalculationImplementation();
-
-    public static ConcatStringsCalculationImplementation getInstance() {
-        return instance;
-    }
-
-    private ConcatStringsCalculationImplementation() {
-        // inhibit public constructor
+    public ConcatStringsCalculationImplementation enableAutoApply() {
+        getPendingFutures().enableAutoApply();
+        return this;
     }
 
     @Override

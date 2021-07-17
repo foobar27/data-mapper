@@ -9,14 +9,9 @@ import static data.refinery.pipeline.AppendConstantCalculation.outputValue;
 
 public class AppendConstantCalculationImplementation extends TestableCalculationImplementation {
 
-    private static final AppendConstantCalculationImplementation instance = new AppendConstantCalculationImplementation();
-
-    public static AppendConstantCalculationImplementation getInstance() {
-        return instance;
-    }
-
-    private AppendConstantCalculationImplementation() {
-        // inhibit public constructor
+    public AppendConstantCalculationImplementation enableAutoApply() {
+        getPendingFutures().enableAutoApply();
+        return this;
     }
 
     @Override

@@ -31,7 +31,8 @@ public class ProfunctorCalculationTest {
 
     @Test
     public void concatenateFirstAndLastName() throws ExecutionException, InterruptedException {
-        CalculationImplementation calculation = ConcatStringsCalculationImplementation.getInstance()
+        CalculationImplementation calculation = new ConcatStringsCalculationImplementation()
+                .enableAutoApply()
                 .wrap(fullNameCalculation);
         SimpleEntity person = new SimpleEntity(ExampleSchemata.person);
         person.setValueOfField(personFirstName, "John");

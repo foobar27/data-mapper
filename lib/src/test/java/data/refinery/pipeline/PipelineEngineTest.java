@@ -20,7 +20,9 @@ public class PipelineEngineTest {
     @Test
     public void calculateFullName() throws ExecutionException, InterruptedException {
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(ConcatStringsCalculation.getInstance(), ConcatStringsCalculationImplementation.getInstance())
+                .register(ConcatStringsCalculation.getInstance(),
+                        new ConcatStringsCalculationImplementation()
+                                .enableAutoApply())
                 .build();
         PipelineEngine engine = new PipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
                 MoreExecutors.directExecutor());
@@ -95,7 +97,9 @@ public class PipelineEngineTest {
                 ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2));
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(AppendConstantCalculation.getInstance(), AppendConstantCalculationImplementation.getInstance())
+                .register(AppendConstantCalculation.getInstance(),
+                        new AppendConstantCalculationImplementation()
+                                .enableAutoApply())
                 .build();
         PipelineEngine engine = new PipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
                 MoreExecutors.directExecutor());
