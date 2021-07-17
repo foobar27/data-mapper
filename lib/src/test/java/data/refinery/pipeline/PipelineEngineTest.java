@@ -28,9 +28,6 @@ public class PipelineEngineTest {
                         new ConcatStringsCalculationImplementation()
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new PipelineEngineFactory()
-                .createPipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
-                        MoreExecutors.directExecutor());
 
         SimpleEntity person = new SimpleEntity(ExampleSchemata.person);
         person.setValueOfField(personFirstName, "John");
@@ -42,9 +39,16 @@ public class PipelineEngineTest {
                         ConcatStringsCalculation.getInstance(),
                         ProfunctorCalculationTest.fullNameCalculation),
                 parameters);
-        ImmutableEntityWithEnrichments entityWitEnrichments = new ImmutableEntityWithEnrichments(person, ImmutableList.of(fullNameEnrichment));
 
-        EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
+        PipelineEngine engine = new PipelineEngineFactory()
+                .createPipelineEngine(
+                        ImmutableList.of(fullNameEnrichment),
+                        calculationFactory,
+                        () -> new SimpleEntity(ExampleSchemata.person),
+                        MoreExecutors.directExecutor());
+
+
+        EntityFieldReadWriteAccessor output = engine.process(person).get();
         assertThat(output.getValueOfField(personFirstName), is("John"));
         assertThat(output.getValueOfField(personLastName), is("Doe"));
         assertThat(output.getValueOfField(personFullName), is("John Doe"));
@@ -101,9 +105,6 @@ public class PipelineEngineTest {
         SimpleEntity entity = new SimpleEntity(schema);
         entity.setValueOfField(a0, "A");
         entity.setValueOfField(b0, "B");
-        ImmutableEntityWithEnrichments entityWitEnrichments = new ImmutableEntityWithEnrichments(
-                entity,
-                ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2));
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
                 .register(AppendConstantCalculation.getInstance(),
@@ -111,9 +112,12 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
         PipelineEngine engine = new PipelineEngineFactory()
-                .createPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+                .createPipelineEngine(
+                        ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2),
+                        calculationFactory,
+                        () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
-        EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
+        EntityFieldReadWriteAccessor output = engine.process(entity).get();
         assertThat(output.getValueOfField(a0), is("A"));
         assertThat(output.getValueOfField(a1), is("AX"));
         assertThat(output.getValueOfField(a2), is("AXY"));
@@ -150,10 +154,6 @@ public class PipelineEngineTest {
         SimpleEntity entity = new SimpleEntity(schema);
         entity.setValueOfField(fields.get(0), "A");
 
-        ImmutableEntityWithEnrichments entityWitEnrichments = new ImmutableEntityWithEnrichments(
-                entity,
-                enrichments);
-
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
                 .register(AppendConstantCalculation.getInstance(),
                         new AppendConstantCalculationImplementation()
@@ -163,9 +163,12 @@ public class PipelineEngineTest {
         //for (int i = 0; i < 10000; ++i)
         {
             PipelineEngine engine = new PipelineEngineFactory()
-                    .createPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+                    .createPipelineEngine(
+                            enrichments,
+                            calculationFactory,
+                            () -> new SimpleEntity(schema),
                             MoreExecutors.directExecutor());
-            EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
+            EntityFieldReadWriteAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));
             assertThat(output.getValueOfField(fields.get(numberOfFields - 1)), is("A"));
