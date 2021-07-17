@@ -54,10 +54,6 @@ final class GenericPipelineEngine implements PipelineEngine {
             this.progress(null, inputEntity.filterFields(knownFields));
         }
 
-        void start() {
-            progress(null, null);
-        }
-
         synchronized void progress(Enrichment finishedEnrichment, EntityFieldReadAccessor enrichmentOutput) {
             if (finishedEnrichment != null) {
                 remainingEnrichments.remove(finishedEnrichment);
