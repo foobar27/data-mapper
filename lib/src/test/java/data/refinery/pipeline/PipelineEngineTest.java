@@ -42,7 +42,7 @@ public class PipelineEngineTest {
 
         PipelineEngine engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        ImmutableList.of(fullNameEnrichment),
+                        new EnrichmentList(ExampleSchemata.person, ImmutableList.of(fullNameEnrichment)),
                         calculationFactory,
                         () -> new SimpleEntity(ExampleSchemata.person),
                         MoreExecutors.directExecutor());
@@ -113,7 +113,7 @@ public class PipelineEngineTest {
                 .build();
         PipelineEngine engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2),
+                        new EnrichmentList(schema, ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2)),
                         calculationFactory,
                         () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
@@ -138,7 +138,7 @@ public class PipelineEngineTest {
         SimpleEntity parameters = new SimpleEntity(AppendConstantCalculation.parameterSchema);
         parameters.setValueOfField(parameterConstant, ""); // do not append anything real
 
-        List<Enrichment> enrichments = new ArrayList<>();
+        List<Enrichment> allEnrichments = new ArrayList<>();
         for (int i = 1; i < numberOfFields; ++i) {
             Enrichment enrichment = new ImmutableEnrichment(
                     new ImmutableMappedCalculation(
@@ -148,8 +148,9 @@ public class PipelineEngineTest {
                                     .rightMapField(outputValue, fields.get(i))
                                     .build()),
                     parameters);
-            enrichments.add(enrichment);
+            allEnrichments.add(enrichment);
         }
+        EnrichmentList enrichments = new EnrichmentList(schema, allEnrichments);
 
         SimpleEntity entity = new SimpleEntity(schema);
         entity.setValueOfField(fields.get(0), "A");

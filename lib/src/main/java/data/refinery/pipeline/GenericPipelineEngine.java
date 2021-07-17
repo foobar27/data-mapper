@@ -1,11 +1,13 @@
 package data.refinery.pipeline;
 
-import com.google.common.collect.ImmutableList;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.Field;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
@@ -14,17 +16,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 final class GenericPipelineEngine implements PipelineEngine {
 
-    private final List<Enrichment> enrichments;
+    private final EnrichmentList enrichments;
     private final CalculationFactory calculationFactory;
     private final Supplier<EntityFieldReadWriteAccessor> outputFactory;
     private final Executor executor;
 
     GenericPipelineEngine(
-            List<Enrichment> enrichments,
+            EnrichmentList enrichments,
             CalculationFactory calculationFactory,
             Supplier<EntityFieldReadWriteAccessor> outputFactory,
             Executor executor) {
-        this.enrichments = ImmutableList.copyOf(enrichments);
+        this.enrichments = checkNotNull(enrichments);
         this.calculationFactory = checkNotNull(calculationFactory);
         this.outputFactory = outputFactory;
         this.executor = executor;
@@ -42,12 +44,9 @@ final class GenericPipelineEngine implements PipelineEngine {
         private final Set<Enrichment> remainingEnrichments;
         private final Map<Enrichment, CompletableFuture<EntityFieldReadAccessor>> pendingFutures = new HashMap<>();
 
-        Process(EntityFieldReadAccessor inputEntity, List<Enrichment> enrichments) {
-            this.knownFields = new HashSet<>(inputEntity.getSchema().getFields());
-            remainingEnrichments = new HashSet<>(enrichments);
-            for (Enrichment enrichment : enrichments) {
-                enrichment.getMappedCalculation().getMapping().getRightMapping().getOutputSchema().getFields().forEach(knownFields::remove);
-            }
+        Process(EntityFieldReadAccessor inputEntity, EnrichmentList enrichments) {
+            this.knownFields = new HashSet<>(enrichments.getFixedSchema().getFields());
+            remainingEnrichments = new HashSet<>(enrichments.getEnrichments());
             this.progress(null, inputEntity.filterFields(knownFields));
         }
 

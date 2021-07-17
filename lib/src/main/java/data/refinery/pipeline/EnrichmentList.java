@@ -2,18 +2,24 @@ package data.refinery.pipeline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public final class EnrichmentList {
 
+    private final EntitySchema inputSchema;
     private final List<Enrichment> enrichments;
     private final Set<Field> allInputFields;
     private final Set<Field> allOutputFields;
+    private final EntitySchema fixedSchema;
 
-    public EnrichmentList(List<Enrichment> enrichments) {
+    public EnrichmentList(EntitySchema inputSchema, List<Enrichment> enrichments) {
+        this.inputSchema = checkNotNull(inputSchema);
         this.enrichments = ImmutableList.copyOf(enrichments);
         this.allInputFields = getEnrichments().stream()
                 .flatMap(enrichment ->
@@ -33,6 +39,7 @@ public final class EnrichmentList {
                                 .getFields()
                                 .stream())
                 .collect(ImmutableSet.toImmutableSet());
+        this.fixedSchema = inputSchema.removeKeys(this.allOutputFields);
     }
 
     public List<Enrichment> getEnrichments() {
@@ -47,5 +54,8 @@ public final class EnrichmentList {
         return allOutputFields;
     }
 
+    public EntitySchema getFixedSchema() {
+        return fixedSchema;
+    }
 
 }

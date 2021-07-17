@@ -1,17 +1,21 @@
 package data.refinery.pipeline;
 
 import data.refinery.schema.EntityFieldReadWriteAccessor;
+import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public final class PipelineEngineFactory {
 
-    public PipelineEngine createPipelineEngine(List<Enrichment> enrichments, CalculationFactory calculationFactory, Supplier<EntityFieldReadWriteAccessor> outputFactory, Executor executor) {
-        if (enrichments.isEmpty()) {
+    public PipelineEngine createPipelineEngine(
+            EnrichmentList enrichments,
+            CalculationFactory calculationFactory,
+            Supplier<EntityFieldReadWriteAccessor> outputFactory,
+            Executor executor) {
+        if (enrichments.getEnrichments().isEmpty()) {
             return new DummyPipelineEngine();
         }
 //        if (areIndependent(enrichments)) {
