@@ -6,9 +6,12 @@
 - Calculation: a description of a calculation with zero or more inputs 
   and one or more outputs. Calculations can be serialized and stored
   in a database.
+- MappedCalculation: a Calculation with a concrete mapping from/to the
+  fields of an entity input and output fields to the fields of an
+  entity
 - CalculationImplementation: a concrete implementation of the calculation
-- Enrichment: a calculation with a concrete mapping from/to the fields of an entity
-  input and output fields to the fields of an entity
+- EnrichedCalculation: a MappedCalculation with the parameters
+- Enrichment: a calculation 
 - EntityMapping: reversible mapping
 - Profunctor: wrapper for a calculation (which maps entity fields to
   the input, and output fields to the entity fields)

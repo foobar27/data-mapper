@@ -8,21 +8,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ImmutableEnrichment implements Enrichment {
 
-    private final Calculation calculation;
+    private final MappedCalculation mappedCalculation;
     private final EntityFieldReadAccessor parameters;
-    private final ProfunctorEntityMapping mapping;
 
-    public ImmutableEnrichment(Calculation calculation, EntityFieldReadAccessor parameters, ProfunctorEntityMapping mapping) {
-        this.calculation = checkNotNull(calculation);
+    public ImmutableEnrichment(MappedCalculation mappedCalculation, EntityFieldReadAccessor parameters) {
+        this.mappedCalculation = checkNotNull(mappedCalculation);
         this.parameters = checkNotNull(parameters);
-        this.mapping = checkNotNull(mapping);
-        checkArgument(calculation.getParameterSchema().equals(parameters.getSchema()));
+        checkArgument(getMappedCalculation().getCalculation().getParameterSchema().equals(parameters.getSchema()));
         // TODO verify schema matches
     }
 
     @Override
-    public Calculation getCalculation() {
-        return calculation;
+    public MappedCalculation getMappedCalculation() {
+        return mappedCalculation;
     }
 
     @Override
@@ -30,8 +28,4 @@ public class ImmutableEnrichment implements Enrichment {
         return parameters;
     }
 
-    @Override
-    public ProfunctorEntityMapping getMapping() {
-        return mapping;
-    }
 }

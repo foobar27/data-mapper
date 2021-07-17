@@ -39,7 +39,7 @@ public class PipelineEngine {
             this.knownFields = new HashSet<>(input.getEntity().getSchema().getFields());
             remainingEnrichments = new HashSet<>(input.getEnrichments());
             for (Enrichment enrichment : input.getEnrichments()) {
-                enrichment.getMapping().getRightMapping().getOutputSchema().getFields().forEach(knownFields::remove);
+                enrichment.getMappedCalculation().getMapping().getRightMapping().getOutputSchema().getFields().forEach(knownFields::remove);
             }
             this.progress(null, input.getEntity().filterFields(knownFields));
         }
@@ -68,10 +68,10 @@ public class PipelineEngine {
             } else {
                 Map<Enrichment, CompletableFuture<EntityFieldReadAccessor>> enrichmentFutures = new HashMap<>();
                 for (Enrichment enrichment : remainingEnrichments) {
-                    if (knownFields.containsAll(enrichment.getMapping().getLeftMapping().getMapping().keySet())) {
+                    if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                         // All dependencies satisfied
-                        CompletableFuture<EntityFieldReadAccessor> enrichmentFuture = calculationFactory.apply(enrichment.getCalculation())
-                                .wrap(enrichment.getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
+                        CompletableFuture<EntityFieldReadAccessor> enrichmentFuture = calculationFactory.apply(enrichment.getMappedCalculation().getCalculation())
+                                .wrap(enrichment.getMappedCalculation().getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
                                 .apply(result, enrichment.getParameters());
                         pendingFutures.put(enrichment, enrichmentFuture); // this must be BEFORE the recursion!
                         enrichmentFutures.put(enrichment, enrichmentFuture);
