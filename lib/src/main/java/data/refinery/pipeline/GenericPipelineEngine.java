@@ -67,11 +67,9 @@ final class GenericPipelineEngine implements PipelineEngine {
                 if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                     // All dependencies satisfied
                     pendingFutures.add(() ->
-                            calculationFactory.apply(enrichment.getMappedCalculation().getCalculation())
-                                    .wrap(enrichment.getMappedCalculation().getMapping()) // TODO shouldn't the wrapping be part of the Enrichment logic? Maybe a class EnrichmentImplementation?
-                                    .apply(result, enrichment.getParameters())) // this must be BEFORE the recursion!
+                            enrichment.apply(result, calculationFactory))
                             // Recursion!
-                            .thenApplyAsync(output -> {
+                            .thenApplyAsync(output -> { // TODO shouldn't this be in the pendingFutures supplier?
                                         finishEnrichment(enrichmentIndex, output);
                                         return null;
                                     },
