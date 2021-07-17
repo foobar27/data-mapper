@@ -67,13 +67,13 @@ final class GenericPipelineEngine implements PipelineEngine {
                 if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                     // All dependencies satisfied
                     pendingFutures.add(() ->
-                            enrichment.apply(result, calculationFactory))
-                            // Recursion!
-                            .thenApplyAsync(output -> { // TODO shouldn't this be in the pendingFutures supplier?
-                                        finishEnrichment(enrichmentIndex, output);
-                                        return null;
-                                    },
-                                    executor);
+                            enrichment.apply(result, calculationFactory)
+                                    // Recursion!
+                                    .thenApplyAsync(output -> {
+                                                finishEnrichment(enrichmentIndex, output);
+                                                return null;
+                                            },
+                                            executor));
                 }
                 ++index;
             }
