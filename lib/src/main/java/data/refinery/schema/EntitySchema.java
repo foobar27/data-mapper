@@ -10,4 +10,7 @@ public interface EntitySchema {
     default EntitySchema filterKeys(Set<Field> fields) {
         return FilteredEntitySchema.filterKeys(this, fields);
     }
+
+    default EntitySchema removeKeys(Set<Field> fields) { return FilteredEntitySchema.removeKeys(this, fields); }
+
 }

@@ -1,5 +1,8 @@
 package data.refinery.schema;
 
+import com.google.common.collect.Sets;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +37,10 @@ final class FilteredEntitySchema implements EntitySchema {
                         .stream()
                         .filter(fields::contains)
                         .collect(Collectors.toList()));
+    }
+
+    public static EntitySchema removeKeys(EntitySchema delegate, Set<Field> fields) {
+        return filterKeys(delegate, Sets.difference(new HashSet<>(delegate.getFields()), fields));
     }
 
     private FilteredEntitySchema(EntitySchema delegate, List<Field> fields) {
