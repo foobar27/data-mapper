@@ -28,8 +28,9 @@ public class PipelineEngineTest {
                         new ConcatStringsCalculationImplementation()
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
-                MoreExecutors.directExecutor());
+        PipelineEngine engine = new PipelineEngineFactory()
+                .createPipelineEngine(calculationFactory, () -> new SimpleEntity(ExampleSchemata.person),
+                        MoreExecutors.directExecutor());
 
         SimpleEntity person = new SimpleEntity(ExampleSchemata.person);
         person.setValueOfField(personFirstName, "John");
@@ -109,8 +110,9 @@ public class PipelineEngineTest {
                         new AppendConstantCalculationImplementation()
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
-                MoreExecutors.directExecutor());
+        PipelineEngine engine = new PipelineEngineFactory()
+                .createPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+                        MoreExecutors.directExecutor());
         EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
         assertThat(output.getValueOfField(a0), is("A"));
         assertThat(output.getValueOfField(a1), is("AX"));
@@ -160,8 +162,9 @@ public class PipelineEngineTest {
         Stopwatch sw = Stopwatch.createStarted();
         //for (int i = 0; i < 10000; ++i)
         {
-            PipelineEngine engine = new GenericPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
-                    MoreExecutors.directExecutor());
+            PipelineEngine engine = new PipelineEngineFactory()
+                    .createPipelineEngine(calculationFactory, () -> new SimpleEntity(schema),
+                            MoreExecutors.directExecutor());
             EntityFieldReadWriteAccessor output = engine.process(entityWitEnrichments).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));

@@ -11,13 +11,13 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class GenericPipelineEngine implements PipelineEngine {
+class GenericPipelineEngine implements PipelineEngine {
 
     private final CalculationFactory calculationFactory;
     private final Supplier<EntityFieldReadWriteAccessor> outputFactory;
     private final Executor executor;
 
-    public GenericPipelineEngine(CalculationFactory calculationFactory, Supplier<EntityFieldReadWriteAccessor> outputFactory, Executor executor) {
+    GenericPipelineEngine(CalculationFactory calculationFactory, Supplier<EntityFieldReadWriteAccessor> outputFactory, Executor executor) {
         this.calculationFactory = checkNotNull(calculationFactory);
         this.outputFactory = outputFactory;
         this.executor = executor;
