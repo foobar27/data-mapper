@@ -48,7 +48,7 @@ public class PipelineEngineTest {
                         MoreExecutors.directExecutor());
 
 
-        EntityFieldReadWriteAccessor output = engine.process(person).get();
+        EntityFieldReadAccessor output = engine.process(person).get();
         assertThat(output.getValueOfField(personFirstName), is("John"));
         assertThat(output.getValueOfField(personLastName), is("Doe"));
         assertThat(output.getValueOfField(personFullName), is("John Doe"));
@@ -117,7 +117,7 @@ public class PipelineEngineTest {
                         calculationFactory,
                         () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
-        EntityFieldReadWriteAccessor output = engine.process(entity).get();
+        EntityFieldReadAccessor output = engine.process(entity).get();
         assertThat(output.getValueOfField(a0), is("A"));
         assertThat(output.getValueOfField(a1), is("AX"));
         assertThat(output.getValueOfField(a2), is("AXY"));
@@ -168,7 +168,7 @@ public class PipelineEngineTest {
                             calculationFactory,
                             () -> new SimpleEntity(schema),
                             MoreExecutors.directExecutor());
-            EntityFieldReadWriteAccessor output = engine.process(entity).get();
+            EntityFieldReadAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));
             assertThat(output.getValueOfField(fields.get(numberOfFields - 1)), is("A"));

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class GenericPipelineEngine implements PipelineEngine {
+final class GenericPipelineEngine implements PipelineEngine {
 
     private final List<Enrichment> enrichments;
     private final CalculationFactory calculationFactory;
@@ -30,13 +30,13 @@ class GenericPipelineEngine implements PipelineEngine {
         this.executor = executor;
     }
 
-    public CompletableFuture<EntityFieldReadWriteAccessor> process(EntityFieldReadAccessor input) {
-        Process process = new Process(input, enrichments);
+    public CompletableFuture<EntityFieldReadAccessor> process(EntityFieldReadAccessor inputEntity) {
+        Process process = new Process(inputEntity, enrichments);
         return process.future;
     }
 
     private final class Process {
-        private final CompletableFuture<EntityFieldReadWriteAccessor> future = new CompletableFuture<>();
+        private final CompletableFuture<EntityFieldReadAccessor> future = new CompletableFuture<>();
         private final EntityFieldReadWriteAccessor result = outputFactory.get();
         private final Set<Field> knownFields;
         private final Set<Enrichment> remainingEnrichments;
