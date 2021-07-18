@@ -17,10 +17,12 @@ public interface PersonReadAccessors extends EntityFieldReadAccessor {
 
     int getAge();
 
+    @Override
     default PersonSchema getSchema() {
         return personSchema();
     }
 
+    @Override
     default Object getValueOfField(Field field) {
         if (field == personSchema().firstName()) {
             return getFirstName();

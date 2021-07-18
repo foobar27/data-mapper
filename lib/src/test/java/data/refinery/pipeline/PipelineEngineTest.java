@@ -11,7 +11,6 @@ import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.schema.*;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -31,13 +30,13 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
 
-        ConcatStringsCalculation.ParameterSchema parameterSchema = ConcatStringsCalculation.parameterSchema();
+        ConcatStringsCalculation.ParametersSchema parametersSchema = ConcatStringsCalculation.parameterSchema();
 
         PojoPerson person = new PojoPerson();
         person.setFirstName("John");
         person.setLastName("Doe");
-        SimpleEntity parameters = new SimpleEntity(parameterSchema);
-        parameters.setValueOfField(parameterSchema.middle(), " ");
+        SimpleEntity parameters = new SimpleEntity(parametersSchema);
+        parameters.setValueOfField(parametersSchema.middle(), " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         ConcatStringsCalculation.getInstance(),
@@ -69,14 +68,14 @@ public class PipelineEngineTest {
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", ImmutableList.of(a0, a1, a2, b0, b1, b2));
 
         AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
-        AppendConstantCalculation.ParameterSchema parameterSchema = AppendConstantCalculation.parameterSchema();
+        AppendConstantCalculation.ParametersSchema parametersSchema = AppendConstantCalculation.parameterSchema();
         AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
 
-        SimpleEntity parametersX = new SimpleEntity(parameterSchema);
-        parametersX.setValueOfField(parameterSchema.constant(), "X");
+        SimpleEntity parametersX = new SimpleEntity(parametersSchema);
+        parametersX.setValueOfField(parametersSchema.constant(), "X");
 
-        SimpleEntity parametersY = new SimpleEntity(parameterSchema);
-        parametersY.setValueOfField(parameterSchema.constant(), "Y");
+        SimpleEntity parametersY = new SimpleEntity(parametersSchema);
+        parametersY.setValueOfField(parametersSchema.constant(), "Y");
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(AppendConstantCalculation.getInstance(),
@@ -145,11 +144,11 @@ public class PipelineEngineTest {
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", fields);
 
         AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
-        AppendConstantCalculation.ParameterSchema parameterSchema = AppendConstantCalculation.parameterSchema();
+        AppendConstantCalculation.ParametersSchema parametersSchema = AppendConstantCalculation.parameterSchema();
         AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
 
-        SimpleEntity parameters = new SimpleEntity(parameterSchema);
-        parameters.setValueOfField(parameterSchema.constant(), ""); // do not append anything real
+        SimpleEntity parameters = new SimpleEntity(parametersSchema);
+        parameters.setValueOfField(parametersSchema.constant(), ""); // do not append anything real
 
         List<Enrichment> allEnrichments = new ArrayList<>();
         for (int i = 1; i < numberOfFields; ++i) {

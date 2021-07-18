@@ -37,10 +37,10 @@ public class ProfunctorCalculationTest {
         person.setValueOfField(personSchema().firstName(), "John");
         person.setValueOfField(personSchema().lastName(), "Doe");
 
-        ConcatStringsCalculation.ParameterSchema parameterSchema = ConcatStringsCalculation.parameterSchema();
+        ConcatStringsCalculation.ParametersSchema parametersSchema = ConcatStringsCalculation.parameterSchema();
 
-        SimpleEntity parameters = new SimpleEntity(parameterSchema);
-        parameters.setValueOfField(parameterSchema.middle(), " ");
+        SimpleEntity parameters = new SimpleEntity(parametersSchema);
+        parameters.setValueOfField(parametersSchema.middle(), " ");
 
         EntityFieldReadAccessor output = calculation.apply(person, parameters).get();
         output.mergeInto(person);
