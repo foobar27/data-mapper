@@ -16,12 +16,12 @@ public final class TestableFutures<K, V> {
 
     private volatile boolean autoApply = false;
 
-    public void enableAutoApply() {
+    public synchronized void enableAutoApply() {
         this.autoApply = true;
         getPendingUnblockers().values().forEach(x -> x.complete(null));
     }
 
-    public CompletableFuture<V> put(K key, Supplier<V> valueSupplier) {
+    public synchronized CompletableFuture<V> put(K key, Supplier<V> valueSupplier) {
         // TODO operation mode: default unblock
         CompletableFuture<V> resultFuture = new CompletableFuture<>();
         CompletableFuture<Void> unblockingFuture = new CompletableFuture<>();
@@ -36,6 +36,7 @@ public final class TestableFutures<K, V> {
             unblockingFuture.completeExceptionally(t);
             return null;
         });
+        unblockingFuture.whenComplete((v, t) -> futures.remove(key, unblockingFuture));
         // TODO remove from "futures" (in successful case, and in exceptional case)
         if (autoApply) {
             unblockingFuture.complete(null);
@@ -43,15 +44,15 @@ public final class TestableFutures<K, V> {
         return resultFuture;
     }
 
-    public CompletableFuture<Void> getAndRemoveUnblocker(K key) {
+    public synchronized CompletableFuture<Void> getAndRemoveUnblocker(K key) {
         return futures.getAndRemove(key);
     }
 
-    public boolean hasPendingFutures() {
+    public synchronized boolean hasPendingFutures() {
         return futures.hasPendingFutures();
     }
 
-    public Multimap<K, CompletableFuture<Void>> getPendingUnblockers() {
+    public synchronized Multimap<K, CompletableFuture<Void>> getPendingUnblockers() {
         return Multimaps.filterEntries(
                 futures.snapshot(),
                 entry -> !entry.getValue().isDone());
@@ -72,6 +73,10 @@ public final class TestableFutures<K, V> {
 
         synchronized void put(K key, CompletableFuture<Void> future) {
             futures.put(key, future);
+        }
+
+        synchronized void remove(K key, CompletableFuture<Void> future) {
+            futures.remove(key, future);
         }
 
         synchronized Multimap<K, CompletableFuture<Void>> snapshot() {
