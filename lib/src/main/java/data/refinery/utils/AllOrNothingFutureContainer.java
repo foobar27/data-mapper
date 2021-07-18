@@ -13,14 +13,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A dynamic list of CompletableFutures.
  * If one of them fails, every Future is cancelled (including Futures which will be added in the future).
- * Addtionaly, a failure will also trigger a user-provided exceptionHandler.
+ * Addtionally, a failure will also trigger a user-provided exceptionHandler.
+ *
+ * Keeps the full history of futures in memory, so you probably don't want to use this for a big amount of futures.
  */
 public class AllOrNothingFutureContainer<V> {
 
     private final Consumer<Throwable> exceptionHandler;
     private final Executor exceptionHandlerExecutor;
     private final List<CompletableFuture<V>> futures = new ArrayList<>();
-    private Throwable failure = null;
+    private boolean failed = false;
 
     public AllOrNothingFutureContainer(Consumer<Throwable> exceptionHandler, Executor exceptionHandlerExecutor) {
         this.exceptionHandler = checkNotNull(exceptionHandler);
@@ -30,6 +32,7 @@ public class AllOrNothingFutureContainer<V> {
     private synchronized void handleException(Throwable t) {
         futures.forEach(f -> f.cancel(false));
         exceptionHandler.accept(t);
+        failed = true;
     }
 
     /**
@@ -38,7 +41,7 @@ public class AllOrNothingFutureContainer<V> {
      * but return a failed future immediately.
      */
     public synchronized CompletableFuture<V> add(Supplier<CompletableFuture<V>> futureSupplier) {
-        if (failure != null) {
+        if (failed) {
             return CompletableFuture.failedFuture(new CancellationException());
         } else {
             CompletableFuture<V> future = futureSupplier.get();

@@ -32,6 +32,10 @@ public final class TestableFutures<K, V> {
             resultFuture.completeExceptionally(t);
             return null;
         });
+        resultFuture.exceptionally(t -> {
+            unblockingFuture.completeExceptionally(t);
+            return null;
+        });
         // TODO remove from "futures" (in successful case, and in exceptional case)
         if (autoApply) {
             unblockingFuture.complete(null);
@@ -50,7 +54,7 @@ public final class TestableFutures<K, V> {
     public Multimap<K, CompletableFuture<Void>> getPendingUnblockers() {
         return Multimaps.filterEntries(
                 futures.snapshot(),
-                entry -> entry.getValue().isDone());
+                entry -> !entry.getValue().isDone());
     }
 
     private static final class Storage<K> {
