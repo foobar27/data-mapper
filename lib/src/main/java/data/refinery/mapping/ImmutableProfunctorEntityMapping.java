@@ -11,8 +11,8 @@ public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping
     private final ImmutableEntityMapping rightMapping;
 
     private ImmutableProfunctorEntityMapping(Builder builder) {
-        this.leftMapping = builder.leftMapping.build();
-        this.rightMapping = builder.rightMapping.build();
+        this.leftMapping = builder.leftMapping.normalizeInputSchema().build();
+        this.rightMapping = builder.rightMapping.normalizeOutputSchema().build();
     }
 
     @Override
@@ -69,8 +69,10 @@ public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping
             return this;
         }
 
-        public ImmutableProfunctorEntityMapping build() {
+        public ImmutableProfunctorEntityMapping normalizeAndBuild() {
             // TODO verify consistency (all fields mapped)
+            leftMapping.normalizeInputSchema();
+            rightMapping.normalizeOutputSchema();
             return new ImmutableProfunctorEntityMapping(this);
         }
 

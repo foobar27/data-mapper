@@ -5,6 +5,7 @@ import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -64,8 +65,8 @@ public final class ImmutableEntityMapping implements EntityMapping {
 
     public static final class Builder {
 
-        private final EntitySchema inputSchema;
-        private final EntitySchema outputSchema;
+        private EntitySchema inputSchema;
+        private EntitySchema outputSchema;
         private final Map<Field, Field> mapping;
         private final Map<Field, Field> reverseMapping;
 
@@ -81,6 +82,16 @@ public final class ImmutableEntityMapping implements EntityMapping {
             this.outputSchema = immutable.outputSchema;
             this.mapping = new HashMap<>(immutable.mapping);
             this.reverseMapping = new HashMap<>(immutable.reverseMapping);
+        }
+
+        public Builder normalizeInputSchema() {
+            this.inputSchema = inputSchema.filterKeys(mapping.keySet());
+            return this;
+        }
+
+        public Builder normalizeOutputSchema() {
+            this.outputSchema = outputSchema.filterKeys(new HashSet<>(mapping.values()));
+            return this;
         }
 
         public Builder mapField(Field from, Field to) {
