@@ -72,7 +72,11 @@ public class PipelineEngineTest {
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(AppendConstantCalculation.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema.filterKeys(ImmutableSet.of(a1))) // TODO why can't this filter be implicit?
+                        ImmutableProfunctorEntityMapping.newBuilder(
+                                schema.filterKeys(ImmutableSet.of(a0)),  // TODO why can't this filter be implicit?
+                                inputSchema,
+                                outputSchema,
+                                schema.filterKeys(ImmutableSet.of(a1))) // TODO why can't this filter be implicit?
                                 .leftMapField(a0, inputValue)
                                 .rightMapField(outputValue, a1)
                                 .build()),
@@ -80,7 +84,11 @@ public class PipelineEngineTest {
         Enrichment enrichmentA2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema.filterKeys(ImmutableSet.of(a2)))
+                        ImmutableProfunctorEntityMapping.newBuilder(
+                                schema.filterKeys(ImmutableSet.of(a1)),  // TODO why can't this filter be implicit?
+                                inputSchema,
+                                outputSchema,
+                                schema.filterKeys(ImmutableSet.of(a2)))  // TODO why can't this filter be implicit?
                                 .leftMapField(a1, inputValue)
                                 .rightMapField(outputValue, a2)
                                 .build()),
@@ -88,7 +96,11 @@ public class PipelineEngineTest {
         Enrichment enrichmentB1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema.filterKeys(ImmutableSet.of(b1)))
+                        ImmutableProfunctorEntityMapping.newBuilder(
+                                schema.filterKeys(ImmutableSet.of(b0)), // TODO why can't this filter be implicit?
+                                inputSchema,
+                                outputSchema,
+                                schema.filterKeys(ImmutableSet.of(b1))) // TODO why can't this filter be implicit?
                                 .leftMapField(b0, inputValue)
                                 .rightMapField(outputValue, b1)
                                 .build()),
@@ -96,7 +108,11 @@ public class PipelineEngineTest {
         Enrichment enrichmentB2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema.filterKeys(ImmutableSet.of(b2)))
+                        ImmutableProfunctorEntityMapping.newBuilder(
+                                schema.filterKeys(ImmutableSet.of(b1)), // TODO why can't this filter be implicit?
+                                inputSchema,
+                                outputSchema,
+                                schema.filterKeys(ImmutableSet.of(b2))) // TODO why can't this filter be implicit?
                                 .leftMapField(b1, inputValue)
                                 .rightMapField(outputValue, b2)
                                 .build()),
@@ -143,7 +159,11 @@ public class PipelineEngineTest {
             Enrichment enrichment = new ImmutableEnrichment(
                     new ImmutableMappedCalculation(
                             AppendConstantCalculation.getInstance(),
-                            ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema.filterKeys(ImmutableSet.of(fields.get(i)))) // TODO why can't this filter be implicit?
+                            ImmutableProfunctorEntityMapping.newBuilder(
+                                    schema.filterKeys(ImmutableSet.of(fields.get(i - 1))), // TODO why can't this filter be implicit?
+                                    inputSchema,
+                                    outputSchema,
+                                    schema.filterKeys(ImmutableSet.of(fields.get(i)))) // TODO why can't this filter be implicit?
                                     .leftMapField(fields.get(i - 1), inputValue)
                                     .rightMapField(outputValue, fields.get(i))
                                     .build()),
@@ -167,8 +187,7 @@ public class PipelineEngineTest {
                         calculationFactory,
                         () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
-        for (int i = 0; i < 1000; ++i)
-        {
+        for (int i = 0; i < 1000; ++i) {
             EntityFieldReadAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));
