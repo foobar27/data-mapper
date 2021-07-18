@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static data.refinery.pipeline.ConcatStringsCalculation.parametersMiddle;
 import static data.refinery.schema.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -27,11 +26,13 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
 
+        ConcatStringsCalculation.ParameterSchema parameterSchema = ConcatStringsCalculation.parameterSchema();
+
         SimpleEntity person = new SimpleEntity(personSchema());
         person.setValueOfField(personSchema().firstName(), "John");
         person.setValueOfField(personSchema().lastName(), "Doe");
-        SimpleEntity parameters = new SimpleEntity(ConcatStringsCalculation.parameterSchema);
-        parameters.setValueOfField(parametersMiddle, " ");
+        SimpleEntity parameters = new SimpleEntity(parameterSchema);
+        parameters.setValueOfField(parameterSchema.middle(), " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         ConcatStringsCalculation.getInstance(),

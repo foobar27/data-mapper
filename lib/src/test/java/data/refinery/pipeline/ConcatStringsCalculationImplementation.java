@@ -8,6 +8,7 @@ import java.util.concurrent.Executor;
 
 import static data.refinery.pipeline.ConcatStringsCalculation.*;
 
+
 public class ConcatStringsCalculationImplementation extends TestableCalculationImplementation {
 
     public ConcatStringsCalculationImplementation(Executor executor) {
@@ -26,14 +27,14 @@ public class ConcatStringsCalculationImplementation extends TestableCalculationI
 
     @Override
     protected EntityFieldReadAccessor calculate(EntityFieldReadAccessor input, EntityFieldReadAccessor parameters) {
-        String left = (String) input.getValueOfField(inputLeft);
-        String right = (String) input.getValueOfField(inputRight);
+        String left = (String) input.getValueOfField(inputSchema().left());
+        String right = (String) input.getValueOfField(inputSchema().right());
 
-        String middle = (String) parameters.getValueOfField(parametersMiddle);
+        String middle = (String) parameters.getValueOfField(parameterSchema().middle());
 
         String result = left + middle + right;
         SimpleEntity output = new SimpleEntity(getCalculation().getOutputSchema());
-        output.setValueOfField(outputValue, result);
+        output.setValueOfField(outputSchema().value(), result);
         return output;
     }
 }

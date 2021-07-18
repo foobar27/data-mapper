@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-import static data.refinery.pipeline.ConcatStringsCalculation.*;
 import static data.refinery.schema.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,12 +20,12 @@ public class ProfunctorCalculationTest {
 
     public static final ProfunctorEntityMapping fullNameCalculation = ImmutableProfunctorEntityMapping.newBuilder(
             personSchema().filterKeys(ImmutableSet.of(personSchema().firstName(), personSchema().lastName())),
-            inputSchema,
-            outputSchema,
+            ConcatStringsCalculation.inputSchema(),
+            ConcatStringsCalculation.outputSchema(),
             personSchema().filterKeys(ImmutableSet.of(personSchema().fullName())))
-            .leftMapField(personSchema().firstName(), inputLeft)
-            .leftMapField(personSchema().lastName(), inputRight)
-            .rightMapField(outputValue, personSchema().fullName())
+            .leftMapField(personSchema().firstName(), ConcatStringsCalculation.inputSchema().left())
+            .leftMapField(personSchema().lastName(), ConcatStringsCalculation.inputSchema().right())
+            .rightMapField(ConcatStringsCalculation.outputSchema().value(), personSchema().fullName())
             .verifyNormalizeAndBuild();
 
     @Test
@@ -38,8 +37,10 @@ public class ProfunctorCalculationTest {
         person.setValueOfField(personSchema().firstName(), "John");
         person.setValueOfField(personSchema().lastName(), "Doe");
 
+        ConcatStringsCalculation.ParameterSchema parameterSchema = ConcatStringsCalculation.parameterSchema();
+
         SimpleEntity parameters = new SimpleEntity(parameterSchema);
-        parameters.setValueOfField(parametersMiddle, " ");
+        parameters.setValueOfField(parameterSchema.middle(), " ");
 
         EntityFieldReadAccessor output = calculation.apply(person, parameters).get();
         output.mergeInto(person);
