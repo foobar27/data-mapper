@@ -84,9 +84,17 @@ public final class ImmutableEntityMapping implements EntityMapping {
             this.reverseMapping = new HashMap<>(immutable.reverseMapping);
         }
 
+        public boolean isInputSchemaComplete() {
+            return mapping.keySet().containsAll(inputSchema.getFields());
+        }
+
         public Builder normalizeInputSchema() {
             this.inputSchema = inputSchema.filterKeys(mapping.keySet());
             return this;
+        }
+
+        public boolean isOutputSchemaComplete() {
+            return mapping.values().containsAll(outputSchema.getFields());
         }
 
         public Builder normalizeOutputSchema() {

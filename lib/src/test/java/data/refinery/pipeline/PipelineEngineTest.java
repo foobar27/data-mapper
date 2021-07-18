@@ -2,7 +2,6 @@ package data.refinery.pipeline;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.MoreExecutors;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.schema.*;
@@ -75,7 +74,7 @@ public class PipelineEngineTest {
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a0, inputValue)
                                 .rightMapField(outputValue, a1)
-                                .normalizeAndBuild()),
+                                .verifyNormalizeAndBuild()),
                 parametersX);
         Enrichment enrichmentA2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
@@ -83,7 +82,7 @@ public class PipelineEngineTest {
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a1, inputValue)
                                 .rightMapField(outputValue, a2)
-                                .normalizeAndBuild()),
+                                .verifyNormalizeAndBuild()),
                 parametersY);
         Enrichment enrichmentB1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
@@ -91,7 +90,7 @@ public class PipelineEngineTest {
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b0, inputValue)
                                 .rightMapField(outputValue, b1)
-                                .normalizeAndBuild()),
+                                .verifyNormalizeAndBuild()),
                 parametersX);
         Enrichment enrichmentB2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
@@ -99,7 +98,7 @@ public class PipelineEngineTest {
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b1, inputValue)
                                 .rightMapField(outputValue, b2)
-                                .normalizeAndBuild()),
+                                .verifyNormalizeAndBuild()),
                 parametersY);
 
         SimpleEntity entity = new SimpleEntity(schema);
@@ -146,7 +145,7 @@ public class PipelineEngineTest {
                             ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                     .leftMapField(fields.get(i - 1), inputValue)
                                     .rightMapField(outputValue, fields.get(i))
-                                    .normalizeAndBuild()),
+                                    .verifyNormalizeAndBuild()),
                     parameters);
             allEnrichments.add(enrichment);
         }

@@ -3,6 +3,7 @@ package data.refinery.mapping;
 import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping {
@@ -69,8 +70,9 @@ public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping
             return this;
         }
 
-        public ImmutableProfunctorEntityMapping normalizeAndBuild() {
-            // TODO verify consistency (all fields mapped)
+        public ImmutableProfunctorEntityMapping verifyNormalizeAndBuild() {
+            checkArgument(leftMapping.isOutputSchemaComplete());
+            checkArgument(rightMapping.isInputSchemaComplete());
             leftMapping.normalizeInputSchema();
             rightMapping.normalizeOutputSchema();
             return new ImmutableProfunctorEntityMapping(this);

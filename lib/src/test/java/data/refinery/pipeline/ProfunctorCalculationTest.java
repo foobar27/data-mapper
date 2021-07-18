@@ -28,7 +28,7 @@ public class ProfunctorCalculationTest {
             .leftMapField(personFirstName, inputLeft)
             .leftMapField(personLastName, inputRight)
             .rightMapField(outputValue, personFullName)
-            .normalizeAndBuild();
+            .verifyNormalizeAndBuild();
 
     @Test
     public void concatenateFirstAndLastName() throws ExecutionException, InterruptedException {
