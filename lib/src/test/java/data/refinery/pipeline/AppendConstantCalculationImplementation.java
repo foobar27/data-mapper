@@ -5,9 +5,7 @@ import data.refinery.schema.SimpleEntity;
 
 import java.util.concurrent.Executor;
 
-import static data.refinery.pipeline.AppendConstantCalculation.inputValue;
-import static data.refinery.pipeline.AppendConstantCalculation.parameterConstant;
-import static data.refinery.pipeline.AppendConstantCalculation.outputValue;
+import static data.refinery.pipeline.AppendConstantCalculation.*;
 
 public class AppendConstantCalculationImplementation extends TestableCalculationImplementation {
 
@@ -27,11 +25,11 @@ public class AppendConstantCalculationImplementation extends TestableCalculation
 
     @Override
     protected EntityFieldReadAccessor calculate(EntityFieldReadAccessor input, EntityFieldReadAccessor parameters) {
-        String value = (String) input.getValueOfField(inputValue);
-        String constant = (String) parameters.getValueOfField(parameterConstant);
+        String value = (String) input.getValueOfField(inputSchema().value());
+        String constant = (String) parameters.getValueOfField(parameterSchema().constant());
         String result = value + constant;
         SimpleEntity output = new SimpleEntity(getCalculation().getOutputSchema());
-        output.setValueOfField(outputValue, result);
+        output.setValueOfField(outputSchema().value(), result);
         return output;
     }
 }

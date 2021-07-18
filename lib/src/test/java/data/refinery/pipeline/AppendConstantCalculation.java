@@ -1,27 +1,69 @@
 package data.refinery.pipeline;
 
 import com.google.common.collect.ImmutableList;
-import data.refinery.schema.EntitySchema;
-import data.refinery.schema.Field;
-import data.refinery.schema.NamedEntitySchema;
-import data.refinery.schema.NamedField;
+import data.refinery.schema.*;
 
 class AppendConstantCalculation implements Calculation {
 
-    static final Field inputValue = new NamedField("AppendConstantCalculation.input.value");
-    static final EntitySchema inputSchema = new NamedEntitySchema(
-            "AppendConstantCalculation.input",
-            ImmutableList.of(inputValue));
+    static final class InputSchema extends FluentEntitySchema {
 
-    static final Field parameterConstant = new NamedField("AppendConstantCalculation.parameters.constant");
-    static final EntitySchema parameterSchema = new NamedEntitySchema(
-            "AppendConstantCalculation.parameter",
-            ImmutableList.of(parameterConstant));
+        private static final InputSchema instance = new InputSchema();
 
-    static final Field outputValue = new NamedField("AppendConstantCalculation.output.value");
-    static final EntitySchema outputSchema = new NamedEntitySchema(
-            "AppendConstantCalculation.output",
-            ImmutableList.of(outputValue));
+        private final Field value = register("value");
+
+        private InputSchema() {
+            super("AppendConstantCalculation.input");
+        }
+
+        Field value() {
+            return value;
+        }
+
+    }
+
+    static final class ParameterSchema extends FluentEntitySchema {
+
+        private static final ParameterSchema instance = new ParameterSchema();
+
+        private final Field constant = register("constant");
+
+        private ParameterSchema() {
+            super("AppendConstantCalculation.parameter");
+        }
+
+        Field constant() {
+            return constant;
+        }
+
+    }
+
+    static final class OutputSchema extends FluentEntitySchema {
+
+        private static final OutputSchema instance = new OutputSchema();
+
+        private final Field value = register("value");
+
+        private OutputSchema() {
+            super("AppendConstantCalculation.output");
+        }
+
+        Field value() {
+            return value;
+        }
+
+    }
+
+    static InputSchema inputSchema() {
+        return InputSchema.instance;
+    }
+
+    static ParameterSchema parameterSchema() {
+        return ParameterSchema.instance;
+    }
+
+    static OutputSchema outputSchema() {
+        return OutputSchema.instance;
+    }
 
     private static final AppendConstantCalculation instance = new AppendConstantCalculation();
 
@@ -35,16 +77,16 @@ class AppendConstantCalculation implements Calculation {
 
     @Override
     public EntitySchema getInputSchema() {
-        return inputSchema;
+        return inputSchema();
     }
 
     @Override
     public EntitySchema getParameterSchema() {
-        return parameterSchema;
+        return parameterSchema();
     }
 
     @Override
     public EntitySchema getOutputSchema() {
-        return outputSchema;
+        return outputSchema();
     }
 }

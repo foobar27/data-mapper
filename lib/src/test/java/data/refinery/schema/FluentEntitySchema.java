@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class FluentEntitySchema implements EntitySchema {
 
     private final String entityName;
-    private static final Set<String> seenSuffixes = new HashSet<>();
+    private final Set<String> seenSuffixes = new HashSet<>();
     private final List<Field> fields = new ArrayList<>();
 
     protected FluentEntitySchema(String entityName) {

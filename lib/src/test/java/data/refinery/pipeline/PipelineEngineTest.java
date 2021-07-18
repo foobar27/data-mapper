@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static data.refinery.pipeline.AppendConstantCalculation.*;
 import static data.refinery.pipeline.ConcatStringsCalculation.parametersMiddle;
 import static data.refinery.schema.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,6 +54,7 @@ public class PipelineEngineTest {
 
     @Test
     public void calculateChains() throws ExecutionException, InterruptedException {
+
         Field a0 = new NamedField("a0");
         Field a1 = new NamedField("a1");
         Field a2 = new NamedField("a2");
@@ -63,41 +63,45 @@ public class PipelineEngineTest {
         Field b2 = new NamedField("b2");
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", ImmutableList.of(a0, a1, a2, b0, b1, b2));
 
-        SimpleEntity parametersX = new SimpleEntity(AppendConstantCalculation.parameterSchema);
-        parametersX.setValueOfField(parameterConstant, "X");
+        AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
+        AppendConstantCalculation.ParameterSchema parameterSchema = AppendConstantCalculation.parameterSchema();
+        AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
 
-        SimpleEntity parametersY = new SimpleEntity(AppendConstantCalculation.parameterSchema);
-        parametersY.setValueOfField(parameterConstant, "Y");
+        SimpleEntity parametersX = new SimpleEntity(parameterSchema);
+        parametersX.setValueOfField(parameterSchema.constant(), "X");
+
+        SimpleEntity parametersY = new SimpleEntity(parameterSchema);
+        parametersY.setValueOfField(parameterSchema.constant(), "Y");
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(AppendConstantCalculation.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
-                                .leftMapField(a0, inputValue)
-                                .rightMapField(outputValue, a1)
+                                .leftMapField(a0, inputSchema.value())
+                                .rightMapField(outputSchema.value(), a1)
                                 .verifyNormalizeAndBuild()),
                 parametersX);
         Enrichment enrichmentA2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
-                                .leftMapField(a1, inputValue)
-                                .rightMapField(outputValue, a2)
+                                .leftMapField(a1, inputSchema.value())
+                                .rightMapField(outputSchema.value(), a2)
                                 .verifyNormalizeAndBuild()),
                 parametersY);
         Enrichment enrichmentB1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
-                                .leftMapField(b0, inputValue)
-                                .rightMapField(outputValue, b1)
+                                .leftMapField(b0, inputSchema.value())
+                                .rightMapField(outputSchema.value(), b1)
                                 .verifyNormalizeAndBuild()),
                 parametersX);
         Enrichment enrichmentB2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculation.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
-                                .leftMapField(b1, inputValue)
-                                .rightMapField(outputValue, b2)
+                                .leftMapField(b1, inputSchema.value())
+                                .rightMapField(outputSchema.value(), b2)
                                 .verifyNormalizeAndBuild()),
                 parametersY);
 
@@ -134,8 +138,13 @@ public class PipelineEngineTest {
             fields.add(new NamedField("a" + i));
         }
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", fields);
-        SimpleEntity parameters = new SimpleEntity(AppendConstantCalculation.parameterSchema);
-        parameters.setValueOfField(parameterConstant, ""); // do not append anything real
+
+        AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
+        AppendConstantCalculation.ParameterSchema parameterSchema = AppendConstantCalculation.parameterSchema();
+        AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
+
+        SimpleEntity parameters = new SimpleEntity(parameterSchema);
+        parameters.setValueOfField(parameterSchema.constant(), ""); // do not append anything real
 
         List<Enrichment> allEnrichments = new ArrayList<>();
         for (int i = 1; i < numberOfFields; ++i) {
@@ -143,8 +152,8 @@ public class PipelineEngineTest {
                     new ImmutableMappedCalculation(
                             AppendConstantCalculation.getInstance(),
                             ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
-                                    .leftMapField(fields.get(i - 1), inputValue)
-                                    .rightMapField(outputValue, fields.get(i))
+                                    .leftMapField(fields.get(i - 1), inputSchema.value())
+                                    .rightMapField(outputSchema.value(), fields.get(i))
                                     .verifyNormalizeAndBuild()),
                     parameters);
             allEnrichments.add(enrichment);
