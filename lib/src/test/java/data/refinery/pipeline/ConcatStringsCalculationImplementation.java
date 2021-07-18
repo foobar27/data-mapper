@@ -4,9 +4,15 @@ package data.refinery.pipeline;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 
+import java.util.concurrent.Executor;
+
 import static data.refinery.pipeline.ConcatStringsCalculation.*;
 
 public class ConcatStringsCalculationImplementation extends TestableCalculationImplementation {
+
+    public ConcatStringsCalculationImplementation(Executor executor) {
+        super(executor);
+    }
 
     public ConcatStringsCalculationImplementation enableAutoApply() {
         getPendingFutures().enableAutoApply();

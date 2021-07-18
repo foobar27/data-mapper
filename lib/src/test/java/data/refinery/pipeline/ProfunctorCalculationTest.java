@@ -1,6 +1,7 @@
 package data.refinery.pipeline;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.MoreExecutors;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.mapping.ProfunctorEntityMapping;
 import data.refinery.schema.EntityFieldReadAccessor;
@@ -31,7 +32,7 @@ public class ProfunctorCalculationTest {
 
     @Test
     public void concatenateFirstAndLastName() throws ExecutionException, InterruptedException {
-        CalculationImplementation calculation = new ConcatStringsCalculationImplementation()
+        CalculationImplementation calculation = new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
                 .enableAutoApply()
                 .wrap(fullNameCalculation);
         SimpleEntity person = new SimpleEntity(ExampleSchemata.person);

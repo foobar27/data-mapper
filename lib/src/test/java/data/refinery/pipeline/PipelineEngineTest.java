@@ -25,7 +25,7 @@ public class PipelineEngineTest {
     public void calculateFullName() throws ExecutionException, InterruptedException {
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
                 .register(ConcatStringsCalculation.getInstance(),
-                        new ConcatStringsCalculationImplementation()
+                        new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
 
@@ -108,7 +108,7 @@ public class PipelineEngineTest {
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
                 .register(AppendConstantCalculation.getInstance(),
-                        new AppendConstantCalculationImplementation()
+                        new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
         PipelineEngine engine = new PipelineEngineFactory()
@@ -129,7 +129,7 @@ public class PipelineEngineTest {
     @Test
     public void calculateDeepChain() throws ExecutionException, InterruptedException {
         // Similar like calculateChains, but we now use a deep chain to see if we get a stack overflow (and we only have 1 chain).
-        int numberOfFields = 200; // TODO if I increase this it sometimes hangs!
+        int numberOfFields = 200;
         List<Field> fields = new ArrayList<>();
         for (int i = 0; i < numberOfFields; ++i) {
             fields.add(new NamedField("a" + i));
@@ -157,7 +157,7 @@ public class PipelineEngineTest {
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
                 .register(AppendConstantCalculation.getInstance(),
-                        new AppendConstantCalculationImplementation()
+                        new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
         Stopwatch sw = Stopwatch.createStarted();
@@ -167,7 +167,7 @@ public class PipelineEngineTest {
                         calculationFactory,
                         () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
-        for (int i = 0; i < 10000; ++i)
+        for (int i = 0; i < 1000; ++i)
         {
             EntityFieldReadAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));

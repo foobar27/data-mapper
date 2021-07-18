@@ -3,11 +3,17 @@ package data.refinery.pipeline;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 
+import java.util.concurrent.Executor;
+
 import static data.refinery.pipeline.AppendConstantCalculation.inputValue;
 import static data.refinery.pipeline.AppendConstantCalculation.parameterConstant;
 import static data.refinery.pipeline.AppendConstantCalculation.outputValue;
 
 public class AppendConstantCalculationImplementation extends TestableCalculationImplementation {
+
+    public AppendConstantCalculationImplementation(Executor executor) {
+        super(executor);
+    }
 
     public AppendConstantCalculationImplementation enableAutoApply() {
         getPendingFutures().enableAutoApply();

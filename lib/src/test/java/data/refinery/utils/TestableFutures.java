@@ -8,13 +8,19 @@ import com.google.common.collect.Multimaps;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public final class TestableFutures<K, V> {
 
     private final Storage<K> futures = new Storage<K>();
 
+    private final Executor executor;
     private volatile boolean autoApply = false;
+
+    public TestableFutures(Executor executor) {
+        this.executor = executor;
+    }
 
     public synchronized void enableAutoApply() {
         this.autoApply = true;
@@ -26,17 +32,19 @@ public final class TestableFutures<K, V> {
         CompletableFuture<V> resultFuture = new CompletableFuture<>();
         CompletableFuture<Void> unblockingFuture = new CompletableFuture<>();
         futures.put(key, unblockingFuture);
-        unblockingFuture.thenRun(() -> resultFuture.complete(valueSupplier.get())); // TODO executor
-        unblockingFuture.exceptionally(t -> {
+        unblockingFuture.thenRunAsync(() -> resultFuture.complete(valueSupplier.get()), executor);
+        unblockingFuture.exceptionallyAsync(t -> {
             // In case the unblockingFuture has been cancelled, we receive a CancellationException here.
             resultFuture.completeExceptionally(t);
             return null;
-        });
-        resultFuture.exceptionally(t -> {
+        }, executor);
+        resultFuture.exceptionallyAsync(t -> {
             unblockingFuture.completeExceptionally(t);
             return null;
-        });
-        unblockingFuture.whenComplete((v, t) -> futures.remove(key, unblockingFuture));
+        }, executor);
+        unblockingFuture.whenCompleteAsync(
+                (v, t) -> futures.remove(key, unblockingFuture),
+                executor);
         // TODO remove from "futures" (in successful case, and in exceptional case)
         if (autoApply) {
             unblockingFuture.complete(null);

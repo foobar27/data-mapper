@@ -86,7 +86,7 @@ final class GenericPipelineEngine implements PipelineEngine {
             if (enrichmentsFinished.cardinality() == enrichments.getEnrichments().size()) {
                 future.complete(result);
             }
-            // TODO only apply recursion if other enrichments depend on this enrichment
+            // TODO only apply recursion if other enrichments depend on this enrichment (maybe pass dependents as arguments?)
             progress();
         }
 

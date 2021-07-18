@@ -6,11 +6,15 @@ import data.refinery.utils.TestableFutures;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public abstract class TestableCalculationImplementation implements CalculationImplementation {
 
-    private final TestableFutures<Map.Entry<EntityFieldReadAccessor, EntityFieldReadAccessor>, EntityFieldReadAccessor> futures =
-            new TestableFutures<>();
+    private final TestableFutures<Map.Entry<EntityFieldReadAccessor, EntityFieldReadAccessor>, EntityFieldReadAccessor> futures;
+
+    public TestableCalculationImplementation(Executor executor) {
+        this.futures = new TestableFutures<>(executor);
+    }
 
     public final TestableFutures<Map.Entry<EntityFieldReadAccessor, EntityFieldReadAccessor>, EntityFieldReadAccessor> getPendingFutures() {
         return futures;

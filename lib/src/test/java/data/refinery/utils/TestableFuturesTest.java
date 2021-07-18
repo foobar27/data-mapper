@@ -1,5 +1,6 @@
 package data.refinery.utils;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class TestableFuturesTest {
 
     @Test
     public void unblockShouldUnblockFuture() throws ExecutionException, InterruptedException {
-        TestableFutures<String, String> futures = new TestableFutures<>();
+        TestableFutures<String, String> futures = new TestableFutures<>(MoreExecutors.directExecutor());
         CompletableFuture<String> foo = futures.put("foo", () -> "FOO");
         CompletableFuture<String> bar = futures.put("bar", () -> "BAR");
         assertFalse(foo.isDone());
@@ -45,7 +46,7 @@ public class TestableFuturesTest {
 
     @Test
     public void exceptionShouldPropagate() {
-        TestableFutures<String, String> futures = new TestableFutures<>();
+        TestableFutures<String, String> futures = new TestableFutures<>(MoreExecutors.directExecutor());
         CompletableFuture<String> foo = futures.put("foo", () -> "FOO");
         assertFalse(foo.isDone());
         assertFalse(!futures.hasPendingFutures());
@@ -57,7 +58,7 @@ public class TestableFuturesTest {
 
     @Test
     public void cancellationShouldPropagate() {
-        TestableFutures<String, String> futures = new TestableFutures<>();
+        TestableFutures<String, String> futures = new TestableFutures<>(MoreExecutors.directExecutor());
         CompletableFuture<String> foo = futures.put("foo", () -> "FOO");
         assertFalse(foo.isDone());
         assertTrue(futures.hasPendingFutures());
@@ -70,7 +71,7 @@ public class TestableFuturesTest {
 
     @Test
     public void multipleValuesCanBeUnblocked() throws ExecutionException, InterruptedException {
-        TestableFutures<String, String> futures = new TestableFutures<>();
+        TestableFutures<String, String> futures = new TestableFutures<>(MoreExecutors.directExecutor());
         CompletableFuture<String> foo1 = futures.put("foo", () -> "FOO1");
         CompletableFuture<String> foo2 = futures.put("foo", () -> "FOO2");
         assertFalse(foo1.isDone());

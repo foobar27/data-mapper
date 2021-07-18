@@ -25,7 +25,7 @@ public class AllOrNothingFutureContainerTest {
     @BeforeEach
     public void setup() {
         exception = new AtomicReference<>();
-        futures = new TestableFutures<>();
+        futures = new TestableFutures<>(MoreExecutors.directExecutor());
         container = new AllOrNothingFutureContainer<>(exception::set, MoreExecutors.directExecutor());
     }
 
