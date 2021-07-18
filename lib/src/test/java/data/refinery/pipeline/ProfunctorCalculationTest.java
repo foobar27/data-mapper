@@ -2,6 +2,7 @@ package data.refinery.pipeline;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.MoreExecutors;
+import data.refinery.boilerplate.ConcatStringsCalculation;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.mapping.ProfunctorEntityMapping;
 import data.refinery.schema.EntityFieldReadAccessor;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

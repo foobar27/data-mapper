@@ -1,38 +1,32 @@
-package data.refinery.pipeline;
+package data.refinery.boilerplate;
 
 import data.refinery.conversion.EntityFactory;
+import data.refinery.pipeline.Calculation;
 import data.refinery.schema.NoSuchFieldException;
 import data.refinery.schema.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class ConcatStringsCalculation implements Calculation {
+public class AppendConstantCalculation implements Calculation {
 
     public static final class InputSchema extends FluentEntitySchema {
 
         private static final InputSchema instance = new InputSchema();
 
-        private final Field left = register("left");
-        private final Field right = register("right");
+        private final Field value = register("value");
 
         private InputSchema() {
-            super("ConcatStringsCalculation.input");
+            super("AppendConstantCalculation.input");
         }
 
-        public Field left() {
-            return left;
+        public Field value() {
+            return value;
         }
 
-        public Field right() {
-            return right;
-        }
     }
 
     public interface InputReadAccessors extends EntityFieldReadAccessor {
-
-        String getLeft();
-
-        String getRight();
+        String getValue();
 
         @Override
         default InputSchema getSchema() {
@@ -41,10 +35,8 @@ public class ConcatStringsCalculation implements Calculation {
 
         @Override
         default Object getValueOfField(Field field) {
-            if (field == InputSchema.instance.left) {
-                return getLeft();
-            } else if (field == InputSchema.instance.right) {
-                return getRight();
+            if (field == InputSchema.instance.value) {
+                return getValue();
             }
             throw new NoSuchFieldException(getSchema(), field);
         }
@@ -52,25 +44,20 @@ public class ConcatStringsCalculation implements Calculation {
     }
 
     public interface InputWriteAccessors extends EntityFieldWriteAccessor {
-
-        void setLeft(String value);
-
-        void setRight(String value);
-
-        @Override
-        default void setValueOfField(Field field, Object value) {
-            if (field == inputSchema().left) {
-                setLeft((String) value);
-            } else if (field == inputSchema().right) {
-                setLeft((String) value);
-            } else {
-                throw new NoSuchFieldException(getSchema(), field);
-            }
-        }
+        void setValue(String value);
 
         @Override
         default InputSchema getSchema() {
             return InputSchema.instance;
+        }
+
+        @Override
+        default void setValueOfField(Field field, Object value) {
+            if (field == InputSchema.instance.value) {
+                setValue((String) value);
+            } else {
+                throw new NoSuchFieldException(getSchema(), field);
+            }
         }
 
     }
@@ -86,33 +73,27 @@ public class ConcatStringsCalculation implements Calculation {
 
     public static final class ImmutableInput implements InputReadAccessors {
 
-        private final String left;
-        private final String right;
+        private final String value;
 
         private ImmutableInput(Builder builder) {
-            this.left = builder.left;
-            this.right = builder.right;
+            this.value = builder.value;
         }
 
         @Override
-        public String getLeft() {
-            return left;
+        public String getValue() {
+            return value;
         }
 
-        @Override
-        public String getRight() {
-            return right;
-        }
+        // TODO toString, hashCode, equals
 
         public static Builder newBuilder() {
             return new Builder();
         }
 
         public static Builder newBuilder(EntityFieldReadAccessor input) {
-            checkArgument(input.getSchema() == inputSchema());
-            Builder builder = new Builder();
-            builder.setLeft((String) input.getValueOfField(inputSchema().left()));
-            builder.setRight((String) input.getValueOfField(inputSchema().right()));
+            checkArgument(input.getSchema() == InputSchema.instance);
+            Builder builder = newBuilder();
+            builder.setValue((String) input.getValueOfField(InputSchema.instance.value));
             return builder;
         }
 
@@ -121,41 +102,32 @@ public class ConcatStringsCalculation implements Calculation {
         }
 
         public static final class Builder implements InputReadWriteAccessors {
-            private String left;
-            private String right;
+
+            private String value;
 
             private Builder() {
                 // nothing to do
             }
 
             private Builder(ImmutableInput input) {
-                this.left = input.left;
-                this.right = input.right;
+                this.value = input.value;
             }
 
             @Override
-            public String getLeft() {
-                return left;
+            public String getValue() {
+                return value;
             }
 
             @Override
-            public String getRight() {
-                return right;
-            }
-
-            @Override
-            public void setLeft(String value) {
-                this.left = value;
-            }
-
-            @Override
-            public void setRight(String value) {
-                this.right = value;
+            public void setValue(String value) {
+                this.value = value;
             }
 
             public ImmutableInput build() {
                 return new ImmutableInput(this);
             }
+
+            // TODO toString, hashCode, equals
         }
 
     }
@@ -163,7 +135,7 @@ public class ConcatStringsCalculation implements Calculation {
     public static final class InputFactory implements EntityFactory<ImmutableInput, ImmutableInput.Builder> {
 
         @Override
-        public InputSchema getSchema() {
+        public EntitySchema getSchema() {
             return InputSchema.instance;
         }
 
@@ -186,27 +158,28 @@ public class ConcatStringsCalculation implements Calculation {
         public ImmutableInput build(ImmutableInput.Builder builder) {
             return builder.build();
         }
-
     }
 
+
     public static final class ParametersSchema extends FluentEntitySchema {
+
         private static final ParametersSchema instance = new ParametersSchema();
 
-        private final Field middle = register("middle");
+        private final Field constant = register("constant");
 
         private ParametersSchema() {
-            super("ConcatStringsCalculation.parameters");
+            super("AppendConstantCalculation.parameters");
         }
 
-        public Field middle() {
-            return middle;
+        public Field constant() {
+            return constant;
         }
 
     }
 
     public interface ParametersReadAccessors extends EntityFieldReadAccessor {
 
-        String getMiddle();
+        String getConstant();
 
         @Override
         default ParametersSchema getSchema() {
@@ -215,8 +188,8 @@ public class ConcatStringsCalculation implements Calculation {
 
         @Override
         default Object getValueOfField(Field field) {
-            if (field == ParametersSchema.instance.middle()) {
-                return getMiddle();
+            if (field == ParametersSchema.instance.constant()) {
+                return getConstant();
             }
             throw new NoSuchFieldException(getSchema(), field);
         }
@@ -225,7 +198,7 @@ public class ConcatStringsCalculation implements Calculation {
 
     public interface ParametersWriteAccessors extends EntityFieldWriteAccessor {
 
-        void setMiddle(String value);
+        void setConstant(String value);
 
         @Override
         default ParametersSchema getSchema() {
@@ -234,8 +207,8 @@ public class ConcatStringsCalculation implements Calculation {
 
         @Override
         default void setValueOfField(Field field, Object value) {
-            if (field == ParametersSchema.instance.middle()) {
-                setMiddle((String) value);
+            if (field == ParametersSchema.instance.constant()) {
+                setConstant((String) value);
             } else {
                 throw new NoSuchFieldException(getSchema(), field);
             }
@@ -253,15 +226,15 @@ public class ConcatStringsCalculation implements Calculation {
     }
 
     public static final class ImmutableParameters implements ParametersReadAccessors {
-        private final String middle;
+        private final String constant;
 
         private ImmutableParameters(Builder builder) {
-            this.middle = builder.middle;
+            this.constant = builder.constant;
         }
 
         @Override
-        public String getMiddle() {
-            return middle;
+        public String getConstant() {
+            return constant;
         }
 
         public static Builder newBuilder() {
@@ -271,7 +244,7 @@ public class ConcatStringsCalculation implements Calculation {
         public static Builder newBuilder(EntityFieldReadAccessor parameters) {
             checkArgument(parameters.getSchema() == ParametersSchema.instance);
             Builder builder = newBuilder();
-            builder.setMiddle((String) parameters.getValueOfField(ParametersSchema.instance.middle()));
+            builder.setConstant((String) parameters.getValueOfField(ParametersSchema.instance.constant()));
             return builder;
         }
 
@@ -281,24 +254,24 @@ public class ConcatStringsCalculation implements Calculation {
 
         public static final class Builder implements ParametersReadWriteAccessors {
 
-            private String middle;
+            private String constant;
 
             private Builder() {
                 // nothing to do
             }
 
             private Builder(ImmutableParameters parameters) {
-                this.middle = parameters.middle;
+                this.constant = parameters.constant;
             }
 
             @Override
-            public String getMiddle() {
-                return middle;
+            public String getConstant() {
+                return constant;
             }
 
             @Override
-            public void setMiddle(String value) {
-                this.middle = value;
+            public void setConstant(String value) {
+                this.constant = value;
             }
 
             public ImmutableParameters build() {
@@ -337,17 +310,19 @@ public class ConcatStringsCalculation implements Calculation {
     }
 
     public static final class OutputSchema extends FluentEntitySchema {
+
         private static final OutputSchema instance = new OutputSchema();
 
         private final Field value = register("value");
 
         private OutputSchema() {
-            super("ConcatStringsCalculation.output");
+            super("AppendConstantCalculation.output");
         }
 
         public Field value() {
             return value;
         }
+
     }
 
     public interface OutputReadAccessors extends EntityFieldReadAccessor {
@@ -482,7 +457,6 @@ public class ConcatStringsCalculation implements Calculation {
         }
     }
 
-
     public static InputSchema inputSchema() {
         return InputSchema.instance;
     }
@@ -495,13 +469,13 @@ public class ConcatStringsCalculation implements Calculation {
         return OutputSchema.instance;
     }
 
-    private static final ConcatStringsCalculation instance = new ConcatStringsCalculation();
+    private static final AppendConstantCalculation instance = new AppendConstantCalculation();
 
-    public static ConcatStringsCalculation getInstance() {
+    public static AppendConstantCalculation getInstance() {
         return instance;
     }
 
-    private ConcatStringsCalculation() {
+    private AppendConstantCalculation() {
         // inhibit public constructor
     }
 
@@ -519,5 +493,4 @@ public class ConcatStringsCalculation implements Calculation {
     public EntitySchema getOutputSchema() {
         return outputSchema();
     }
-
 }

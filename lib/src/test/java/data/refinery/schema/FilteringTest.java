@@ -2,14 +2,14 @@ package data.refinery.schema;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import data.refinery.example.PojoPerson;
+import data.refinery.boilerplate.PojoPerson;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;

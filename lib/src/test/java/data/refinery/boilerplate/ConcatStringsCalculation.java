@@ -1,31 +1,39 @@
-package data.refinery.pipeline;
+package data.refinery.boilerplate;
 
 import data.refinery.conversion.EntityFactory;
+import data.refinery.pipeline.Calculation;
 import data.refinery.schema.NoSuchFieldException;
 import data.refinery.schema.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class AppendConstantCalculation implements Calculation {
+public class ConcatStringsCalculation implements Calculation {
 
     public static final class InputSchema extends FluentEntitySchema {
 
         private static final InputSchema instance = new InputSchema();
 
-        private final Field value = register("value");
+        private final Field left = register("left");
+        private final Field right = register("right");
 
         private InputSchema() {
-            super("AppendConstantCalculation.input");
+            super("ConcatStringsCalculation.input");
         }
 
-        public Field value() {
-            return value;
+        public Field left() {
+            return left;
         }
 
+        public Field right() {
+            return right;
+        }
     }
 
     public interface InputReadAccessors extends EntityFieldReadAccessor {
-        String getValue();
+
+        String getLeft();
+
+        String getRight();
 
         @Override
         default InputSchema getSchema() {
@@ -34,8 +42,10 @@ public class AppendConstantCalculation implements Calculation {
 
         @Override
         default Object getValueOfField(Field field) {
-            if (field == InputSchema.instance.value) {
-                return getValue();
+            if (field == InputSchema.instance.left) {
+                return getLeft();
+            } else if (field == InputSchema.instance.right) {
+                return getRight();
             }
             throw new NoSuchFieldException(getSchema(), field);
         }
@@ -43,20 +53,25 @@ public class AppendConstantCalculation implements Calculation {
     }
 
     public interface InputWriteAccessors extends EntityFieldWriteAccessor {
-        void setValue(String value);
+
+        void setLeft(String value);
+
+        void setRight(String value);
+
+        @Override
+        default void setValueOfField(Field field, Object value) {
+            if (field == inputSchema().left) {
+                setLeft((String) value);
+            } else if (field == inputSchema().right) {
+                setLeft((String) value);
+            } else {
+                throw new NoSuchFieldException(getSchema(), field);
+            }
+        }
 
         @Override
         default InputSchema getSchema() {
             return InputSchema.instance;
-        }
-
-        @Override
-        default void setValueOfField(Field field, Object value) {
-            if (field == InputSchema.instance.value) {
-                setValue((String) value);
-            } else {
-                throw new NoSuchFieldException(getSchema(), field);
-            }
         }
 
     }
@@ -72,27 +87,33 @@ public class AppendConstantCalculation implements Calculation {
 
     public static final class ImmutableInput implements InputReadAccessors {
 
-        private final String value;
+        private final String left;
+        private final String right;
 
         private ImmutableInput(Builder builder) {
-            this.value = builder.value;
+            this.left = builder.left;
+            this.right = builder.right;
         }
 
         @Override
-        public String getValue() {
-            return value;
+        public String getLeft() {
+            return left;
         }
 
-        // TODO toString, hashCode, equals
+        @Override
+        public String getRight() {
+            return right;
+        }
 
         public static Builder newBuilder() {
             return new Builder();
         }
 
         public static Builder newBuilder(EntityFieldReadAccessor input) {
-            checkArgument(input.getSchema() == InputSchema.instance);
-            Builder builder = newBuilder();
-            builder.setValue((String) input.getValueOfField(InputSchema.instance.value));
+            checkArgument(input.getSchema() == inputSchema());
+            Builder builder = new Builder();
+            builder.setLeft((String) input.getValueOfField(inputSchema().left()));
+            builder.setRight((String) input.getValueOfField(inputSchema().right()));
             return builder;
         }
 
@@ -101,32 +122,41 @@ public class AppendConstantCalculation implements Calculation {
         }
 
         public static final class Builder implements InputReadWriteAccessors {
-
-            private String value;
+            private String left;
+            private String right;
 
             private Builder() {
                 // nothing to do
             }
 
             private Builder(ImmutableInput input) {
-                this.value = input.value;
+                this.left = input.left;
+                this.right = input.right;
             }
 
             @Override
-            public String getValue() {
-                return value;
+            public String getLeft() {
+                return left;
             }
 
             @Override
-            public void setValue(String value) {
-                this.value = value;
+            public String getRight() {
+                return right;
+            }
+
+            @Override
+            public void setLeft(String value) {
+                this.left = value;
+            }
+
+            @Override
+            public void setRight(String value) {
+                this.right = value;
             }
 
             public ImmutableInput build() {
                 return new ImmutableInput(this);
             }
-
-            // TODO toString, hashCode, equals
         }
 
     }
@@ -134,7 +164,7 @@ public class AppendConstantCalculation implements Calculation {
     public static final class InputFactory implements EntityFactory<ImmutableInput, ImmutableInput.Builder> {
 
         @Override
-        public EntitySchema getSchema() {
+        public InputSchema getSchema() {
             return InputSchema.instance;
         }
 
@@ -157,28 +187,27 @@ public class AppendConstantCalculation implements Calculation {
         public ImmutableInput build(ImmutableInput.Builder builder) {
             return builder.build();
         }
+
     }
 
-
     public static final class ParametersSchema extends FluentEntitySchema {
-
         private static final ParametersSchema instance = new ParametersSchema();
 
-        private final Field constant = register("constant");
+        private final Field middle = register("middle");
 
         private ParametersSchema() {
-            super("AppendConstantCalculation.parameters");
+            super("ConcatStringsCalculation.parameters");
         }
 
-        public Field constant() {
-            return constant;
+        public Field middle() {
+            return middle;
         }
 
     }
 
     public interface ParametersReadAccessors extends EntityFieldReadAccessor {
 
-        String getConstant();
+        String getMiddle();
 
         @Override
         default ParametersSchema getSchema() {
@@ -187,8 +216,8 @@ public class AppendConstantCalculation implements Calculation {
 
         @Override
         default Object getValueOfField(Field field) {
-            if (field == ParametersSchema.instance.constant()) {
-                return getConstant();
+            if (field == ParametersSchema.instance.middle()) {
+                return getMiddle();
             }
             throw new NoSuchFieldException(getSchema(), field);
         }
@@ -197,7 +226,7 @@ public class AppendConstantCalculation implements Calculation {
 
     public interface ParametersWriteAccessors extends EntityFieldWriteAccessor {
 
-        void setConstant(String value);
+        void setMiddle(String value);
 
         @Override
         default ParametersSchema getSchema() {
@@ -206,8 +235,8 @@ public class AppendConstantCalculation implements Calculation {
 
         @Override
         default void setValueOfField(Field field, Object value) {
-            if (field == ParametersSchema.instance.constant()) {
-                setConstant((String) value);
+            if (field == ParametersSchema.instance.middle()) {
+                setMiddle((String) value);
             } else {
                 throw new NoSuchFieldException(getSchema(), field);
             }
@@ -225,15 +254,15 @@ public class AppendConstantCalculation implements Calculation {
     }
 
     public static final class ImmutableParameters implements ParametersReadAccessors {
-        private final String constant;
+        private final String middle;
 
         private ImmutableParameters(Builder builder) {
-            this.constant = builder.constant;
+            this.middle = builder.middle;
         }
 
         @Override
-        public String getConstant() {
-            return constant;
+        public String getMiddle() {
+            return middle;
         }
 
         public static Builder newBuilder() {
@@ -243,7 +272,7 @@ public class AppendConstantCalculation implements Calculation {
         public static Builder newBuilder(EntityFieldReadAccessor parameters) {
             checkArgument(parameters.getSchema() == ParametersSchema.instance);
             Builder builder = newBuilder();
-            builder.setConstant((String) parameters.getValueOfField(ParametersSchema.instance.constant()));
+            builder.setMiddle((String) parameters.getValueOfField(ParametersSchema.instance.middle()));
             return builder;
         }
 
@@ -253,24 +282,24 @@ public class AppendConstantCalculation implements Calculation {
 
         public static final class Builder implements ParametersReadWriteAccessors {
 
-            private String constant;
+            private String middle;
 
             private Builder() {
                 // nothing to do
             }
 
             private Builder(ImmutableParameters parameters) {
-                this.constant = parameters.constant;
+                this.middle = parameters.middle;
             }
 
             @Override
-            public String getConstant() {
-                return constant;
+            public String getMiddle() {
+                return middle;
             }
 
             @Override
-            public void setConstant(String value) {
-                this.constant = value;
+            public void setMiddle(String value) {
+                this.middle = value;
             }
 
             public ImmutableParameters build() {
@@ -309,19 +338,17 @@ public class AppendConstantCalculation implements Calculation {
     }
 
     public static final class OutputSchema extends FluentEntitySchema {
-
         private static final OutputSchema instance = new OutputSchema();
 
         private final Field value = register("value");
 
         private OutputSchema() {
-            super("AppendConstantCalculation.output");
+            super("ConcatStringsCalculation.output");
         }
 
         public Field value() {
             return value;
         }
-
     }
 
     public interface OutputReadAccessors extends EntityFieldReadAccessor {
@@ -456,25 +483,26 @@ public class AppendConstantCalculation implements Calculation {
         }
     }
 
-    static InputSchema inputSchema() {
+
+    public static InputSchema inputSchema() {
         return InputSchema.instance;
     }
 
-    static ParametersSchema parameterSchema() {
+    public static ParametersSchema parameterSchema() {
         return ParametersSchema.instance;
     }
 
-    static OutputSchema outputSchema() {
+    public static OutputSchema outputSchema() {
         return OutputSchema.instance;
     }
 
-    private static final AppendConstantCalculation instance = new AppendConstantCalculation();
+    private static final ConcatStringsCalculation instance = new ConcatStringsCalculation();
 
-    public static AppendConstantCalculation getInstance() {
+    public static ConcatStringsCalculation getInstance() {
         return instance;
     }
 
-    private AppendConstantCalculation() {
+    private ConcatStringsCalculation() {
         // inhibit public constructor
     }
 
@@ -492,4 +520,5 @@ public class AppendConstantCalculation implements Calculation {
     public EntitySchema getOutputSchema() {
         return outputSchema();
     }
+
 }

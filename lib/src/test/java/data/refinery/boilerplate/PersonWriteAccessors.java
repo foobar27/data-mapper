@@ -1,9 +1,9 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 import data.refinery.schema.EntityFieldWriteAccessor;
 import data.refinery.schema.Field;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 
 public interface PersonWriteAccessors extends EntityFieldWriteAccessor {
 

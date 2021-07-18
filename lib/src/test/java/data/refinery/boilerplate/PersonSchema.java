@@ -1,4 +1,4 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 import data.refinery.schema.Field;
 import data.refinery.schema.FluentEntitySchema;

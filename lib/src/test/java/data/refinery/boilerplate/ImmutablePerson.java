@@ -1,8 +1,8 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 import data.refinery.schema.EntityFieldReadAccessor;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 
 public final class ImmutablePerson implements PersonReadAccessors {
 

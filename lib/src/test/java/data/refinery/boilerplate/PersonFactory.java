@@ -1,10 +1,10 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 import data.refinery.conversion.EntityFactory;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.EntitySchema;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 
 public class PersonFactory implements EntityFactory<ImmutablePerson, ImmutablePerson.Builder> {
 

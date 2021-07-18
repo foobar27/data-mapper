@@ -1,11 +1,11 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.Field;
 import data.refinery.schema.NoSuchFieldException;
 
-import static data.refinery.example.PersonSchema.personSchema;
+import static data.refinery.boilerplate.PersonSchema.personSchema;
 
 public interface PersonReadAccessors extends EntityFieldReadAccessor {
 

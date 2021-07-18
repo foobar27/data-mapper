@@ -1,4 +1,4 @@
-package data.refinery.example;
+package data.refinery.boilerplate;
 
 import com.google.common.base.MoreObjects;
 
