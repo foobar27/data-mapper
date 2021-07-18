@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-import static data.refinery.schema.PersonSchema.personSchema;
+import static data.refinery.example.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

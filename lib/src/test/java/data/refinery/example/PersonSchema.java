@@ -1,4 +1,7 @@
-package data.refinery.schema;
+package data.refinery.example;
+
+import data.refinery.schema.Field;
+import data.refinery.schema.FluentEntitySchema;
 
 public class PersonSchema extends FluentEntitySchema {
 

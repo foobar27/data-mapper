@@ -3,6 +3,7 @@ package data.refinery.pipeline;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
+import data.refinery.example.PojoPerson;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.schema.*;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static data.refinery.schema.PersonSchema.personSchema;
+import static data.refinery.example.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -28,9 +29,9 @@ public class PipelineEngineTest {
 
         ConcatStringsCalculation.ParameterSchema parameterSchema = ConcatStringsCalculation.parameterSchema();
 
-        SimpleEntity person = new SimpleEntity(personSchema());
-        person.setValueOfField(personSchema().firstName(), "John");
-        person.setValueOfField(personSchema().lastName(), "Doe");
+        PojoPerson person = new PojoPerson();
+        person.setFirstName("John");
+        person.setLastName("Doe");
         SimpleEntity parameters = new SimpleEntity(parameterSchema);
         parameters.setValueOfField(parameterSchema.middle(), " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
@@ -45,7 +46,6 @@ public class PipelineEngineTest {
                         calculationFactory,
                         () -> new SimpleEntity(personSchema()),
                         MoreExecutors.directExecutor());
-
 
         EntityFieldReadAccessor output = engine.process(person).get();
         assertThat(output.getValueOfField(personSchema().firstName()), is("John"));

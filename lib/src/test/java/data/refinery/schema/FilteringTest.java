@@ -2,13 +2,14 @@ package data.refinery.schema;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import data.refinery.example.PojoPerson;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import static data.refinery.schema.PersonSchema.personSchema;
+import static data.refinery.example.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -23,21 +24,21 @@ public class FilteringTest {
 
     @Test
     public void accessorShouldFailOnRemovedField() {
-        SimpleEntity entity = new SimpleEntity(personSchema());
+        PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity = entity.filterFields(ImmutableSet.copyOf(allNameFields));
         assertThrows(NoSuchFieldException.class, () -> filteredEntity.getValueOfField(personSchema().age()));
     }
 
     @Test
     public void filteredEntityShouldHaveAdjustedSchema() {
-        SimpleEntity entity = new SimpleEntity(personSchema());
+        PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity = entity.filterFields(ImmutableSet.copyOf(allNameFields));
         assertThat(filteredEntity.getSchema().getFields(), equalTo(allNameFields));
     }
 
     @Test
     public void doubleFilteringShouldTriggerFastPath() {
-        SimpleEntity entity = new SimpleEntity(personSchema());
+        PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity1 = entity.filterFields(ImmutableSet.copyOf(allNameFields));
         assertThat(filteredEntity1.getSchema().getFields(), equalTo(allNameFields));
 
@@ -54,14 +55,14 @@ public class FilteringTest {
 
     @Test
     public void removeNoFieldsShouldTriggerFastPath() {
-        SimpleEntity entity = new SimpleEntity(personSchema());
+        PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity = entity.filterFields(Collections.emptySet());
         assertThat(filteredEntity, instanceOf(EmptyEntityFieldReadAccessor.class));
     }
 
     @Test
     public void removeAllFieldsShouldTriggerFastPath() {
-        SimpleEntity entity = new SimpleEntity(personSchema());
+        PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity = entity.filterFields(new HashSet<>(entity.getSchema().getFields()));
         assertThat(filteredEntity, instanceOf(SimpleEntity.class));
     }
