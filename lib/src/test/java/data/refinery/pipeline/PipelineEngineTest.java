@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static data.refinery.pipeline.AppendConstantCalculation.*;
 import static data.refinery.pipeline.ConcatStringsCalculation.parametersMiddle;
-import static data.refinery.schema.ExampleSchemata.*;
+import static data.refinery.schema.PersonSchema.personSchema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -28,9 +28,9 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
 
-        SimpleEntity person = new SimpleEntity(ExampleSchemata.person);
-        person.setValueOfField(personFirstName, "John");
-        person.setValueOfField(personLastName, "Doe");
+        SimpleEntity person = new SimpleEntity(personSchema());
+        person.setValueOfField(personSchema().firstName(), "John");
+        person.setValueOfField(personSchema().lastName(), "Doe");
         SimpleEntity parameters = new SimpleEntity(ConcatStringsCalculation.parameterSchema);
         parameters.setValueOfField(parametersMiddle, " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
@@ -41,16 +41,16 @@ public class PipelineEngineTest {
 
         PipelineEngine engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        new PipelineDefinition(ExampleSchemata.person, ImmutableList.of(fullNameEnrichment)),
+                        new PipelineDefinition(personSchema(), ImmutableList.of(fullNameEnrichment)),
                         calculationFactory,
-                        () -> new SimpleEntity(ExampleSchemata.person),
+                        () -> new SimpleEntity(personSchema()),
                         MoreExecutors.directExecutor());
 
 
         EntityFieldReadAccessor output = engine.process(person).get();
-        assertThat(output.getValueOfField(personFirstName), is("John"));
-        assertThat(output.getValueOfField(personLastName), is("Doe"));
-        assertThat(output.getValueOfField(personFullName), is("John Doe"));
+        assertThat(output.getValueOfField(personSchema().firstName()), is("John"));
+        assertThat(output.getValueOfField(personSchema().lastName()), is("Doe"));
+        assertThat(output.getValueOfField(personSchema().fullName()), is("John Doe"));
     }
 
     @Test
