@@ -3,7 +3,7 @@ package data.refinery.example;
 import data.refinery.schema.Field;
 import data.refinery.schema.FluentEntitySchema;
 
-public class PersonSchema extends FluentEntitySchema {
+public final class PersonSchema extends FluentEntitySchema {
 
     private static final PersonSchema instance = new PersonSchema();
 

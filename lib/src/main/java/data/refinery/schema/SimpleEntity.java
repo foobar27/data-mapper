@@ -11,10 +11,16 @@ import static data.refinery.schema.NoSuchFieldException.checkFieldExists;
 public final class SimpleEntity implements EntityFieldReadWriteAccessor {
 
     private final EntitySchema schema;
-    private final Map<Field, Object> values = new HashMap<>();
+    private final Map<Field, Object> values;
 
     public SimpleEntity(EntitySchema schema) {
         this.schema = checkNotNull(schema);
+        this.values = new HashMap<>();
+    }
+
+    public SimpleEntity(SimpleEntity other) {
+        this.schema = other.getSchema();
+        this.values = new HashMap<>(other.values); // TODO deep copy once we have nested entities!
     }
 
     @Override

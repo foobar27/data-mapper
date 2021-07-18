@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.util.Objects;
 
-public class PojoPerson implements PersonReadWriteAccessors {
+public final class PojoPerson implements PersonReadWriteAccessors {
 
     private String firstName;
     private String lastName;

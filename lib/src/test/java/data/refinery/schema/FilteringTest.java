@@ -50,7 +50,7 @@ public class FilteringTest {
         // Unfortunately the only way to check if the fast path was triggered is to call the toString method.
         // However, I do not want to expose any introspection logic, because this is essentially just a performance optimization.
         assertThat(filteredEntity2.toString(),
-                equalTo("FilteredEntityFieldReadAccessor[SimpleEntity{schema=Person}, [Field[Person.firstName], Field[Person.lastName]]]"));
+                equalTo("FilteredEntityFieldReadAccessor[Person{firstName=null, lastName=null, fullName=null, age=0}, [Field[Person.firstName], Field[Person.lastName]]]"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class FilteringTest {
     public void removeAllFieldsShouldTriggerFastPath() {
         PojoPerson entity = new PojoPerson();
         EntityFieldReadAccessor filteredEntity = entity.filterFields(new HashSet<>(entity.getSchema().getFields()));
-        assertThat(filteredEntity, instanceOf(SimpleEntity.class));
+        assertThat(filteredEntity, instanceOf(PojoPerson.class));
     }
 
 }

@@ -3,11 +3,15 @@ package data.refinery.pipeline;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
+import data.refinery.conversion.SimpleEntityFactory;
+import data.refinery.example.ImmutablePerson;
+import data.refinery.example.PersonFactory;
 import data.refinery.example.PojoPerson;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.schema.*;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -40,17 +44,17 @@ public class PipelineEngineTest {
                         ProfunctorCalculationTest.fullNameCalculation),
                 parameters);
 
-        PipelineEngine engine = new PipelineEngineFactory()
+        PipelineEngine<ImmutablePerson, ImmutablePerson.Builder> engine = new PipelineEngineFactory()
                 .createPipelineEngine(
                         new PipelineDefinition(personSchema(), ImmutableList.of(fullNameEnrichment)),
                         calculationFactory,
-                        () -> new SimpleEntity(personSchema()),
+                        PersonFactory.getInstance(),
                         MoreExecutors.directExecutor());
 
-        EntityFieldReadAccessor output = engine.process(person).get();
-        assertThat(output.getValueOfField(personSchema().firstName()), is("John"));
-        assertThat(output.getValueOfField(personSchema().lastName()), is("Doe"));
-        assertThat(output.getValueOfField(personSchema().fullName()), is("John Doe"));
+        ImmutablePerson output = engine.process(person).get();
+        assertThat(output.getFirstName(), is("John"));
+        assertThat(output.getLastName(), is("Doe"));
+        assertThat(output.getFullName(), is("John Doe"));
     }
 
     @Test
@@ -115,11 +119,11 @@ public class PipelineEngineTest {
                         new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
-        PipelineEngine engine = new PipelineEngineFactory()
+        PipelineEngine<SimpleEntity, SimpleEntity> engine = new PipelineEngineFactory()
                 .createPipelineEngine(
                         new PipelineDefinition(schema, ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2)),
                         calculationFactory,
-                        () -> new SimpleEntity(schema),
+                        new SimpleEntityFactory(schema),
                         MoreExecutors.directExecutor());
         EntityFieldReadAccessor output = engine.process(entity).get();
         assertThat(output.getValueOfField(a0), is("A"));
@@ -170,11 +174,11 @@ public class PipelineEngineTest {
                                 .enableAutoApply())
                 .build();
         Stopwatch sw = Stopwatch.createStarted();
-        PipelineEngine engine = new PipelineEngineFactory()
+        PipelineEngine<SimpleEntity, SimpleEntity> engine = new PipelineEngineFactory()
                 .createPipelineEngine(
                         enrichments,
                         calculationFactory,
-                        () -> new SimpleEntity(schema),
+                        new SimpleEntityFactory(schema),
                         MoreExecutors.directExecutor());
         for (int i = 0; i < 1000; ++i) {
             EntityFieldReadAccessor output = engine.process(entity).get();

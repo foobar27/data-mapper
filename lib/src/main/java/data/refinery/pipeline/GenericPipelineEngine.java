@@ -1,5 +1,6 @@
 package data.refinery.pipeline;
 
+import data.refinery.conversion.EntityFactory;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.Field;
@@ -10,21 +11,21 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-final class GenericPipelineEngine implements PipelineEngine {
+final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, OutputBuilderType extends EntityFieldReadWriteAccessor>
+        implements PipelineEngine<OutputType, OutputBuilderType> {
 
     private final PipelineDefinition enrichments;
     private final CalculationFactory calculationFactory;
-    private final Supplier<EntityFieldReadWriteAccessor> outputFactory;
+    private final EntityFactory<OutputType, OutputBuilderType> outputFactory;
     private final Executor executor;
 
     GenericPipelineEngine(
             PipelineDefinition enrichments,
             CalculationFactory calculationFactory,
-            Supplier<EntityFieldReadWriteAccessor> outputFactory,
+            EntityFactory<OutputType, OutputBuilderType> outputFactory,
             Executor executor) {
         this.enrichments = checkNotNull(enrichments);
         this.calculationFactory = checkNotNull(calculationFactory);
@@ -32,14 +33,14 @@ final class GenericPipelineEngine implements PipelineEngine {
         this.executor = executor;
     }
 
-    public CompletableFuture<EntityFieldReadAccessor> process(EntityFieldReadAccessor inputEntity) {
+    public CompletableFuture<OutputType> process(EntityFieldReadAccessor inputEntity) {
         Process process = new Process(inputEntity, enrichments);
         return process.future;
     }
 
     private final class Process {
-        private final CompletableFuture<EntityFieldReadAccessor> future = new CompletableFuture<>();
-        private final EntityFieldReadWriteAccessor result = outputFactory.get();
+        private final CompletableFuture<OutputType> future = new CompletableFuture<>();
+        private final OutputBuilderType result = outputFactory.newBuilder();
         private final Set<Field> knownFields;
         private final BitSet enrichmentsTriggered;
         private final BitSet enrichmentsFinished;
@@ -84,7 +85,7 @@ final class GenericPipelineEngine implements PipelineEngine {
             knownFields.addAll(enrichmentOutput.getSchema().getFields());
             enrichmentOutput.mergeInto(result);
             if (enrichmentsFinished.cardinality() == enrichments.getEnrichments().size()) {
-                future.complete(result);
+                future.complete(outputFactory.build(result));
             }
             // TODO only apply recursion if other enrichments depend on this enrichment (maybe pass dependents as arguments?)
             progress();
