@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class EnrichmentList {
+public final class PipelineDefinition {
 
     private final EntitySchema inputSchema;
     private final List<Enrichment> enrichments;
@@ -24,7 +24,7 @@ public final class EnrichmentList {
     private final EntitySchema fixedSchema;
     private final ImmutableGraph<Enrichment> enrichmentGraph;
 
-    public EnrichmentList(EntitySchema inputSchema, List<Enrichment> enrichments) {
+    public PipelineDefinition(EntitySchema inputSchema, List<Enrichment> enrichments) {
         this.inputSchema = checkNotNull(inputSchema);
         this.enrichments = ImmutableList.copyOf(enrichments);
         this.allInputFields = getEnrichments().stream()

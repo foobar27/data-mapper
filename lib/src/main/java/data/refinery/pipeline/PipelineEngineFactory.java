@@ -1,7 +1,6 @@
 package data.refinery.pipeline;
 
 import data.refinery.schema.EntityFieldReadWriteAccessor;
-import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
 import java.util.Set;
@@ -11,7 +10,7 @@ import java.util.function.Supplier;
 public final class PipelineEngineFactory {
 
     public PipelineEngine createPipelineEngine(
-            EnrichmentList enrichments,
+            PipelineDefinition enrichments,
             CalculationFactory calculationFactory,
             Supplier<EntityFieldReadWriteAccessor> outputFactory,
             Executor executor) {
@@ -24,7 +23,7 @@ public final class PipelineEngineFactory {
         return new GenericPipelineEngine(enrichments, calculationFactory, outputFactory, executor);
     }
 
-    boolean areIndependent(EnrichmentList enrichments) {
+    boolean areIndependent(PipelineDefinition enrichments) {
         Set<Field> inputFields = enrichments.getAllInputFields();
         Set<Field> outputFields = enrichments.getAllOutputFields();
         return inputFields

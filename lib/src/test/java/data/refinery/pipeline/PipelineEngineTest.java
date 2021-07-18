@@ -42,7 +42,7 @@ public class PipelineEngineTest {
 
         PipelineEngine engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        new EnrichmentList(ExampleSchemata.person, ImmutableList.of(fullNameEnrichment)),
+                        new PipelineDefinition(ExampleSchemata.person, ImmutableList.of(fullNameEnrichment)),
                         calculationFactory,
                         () -> new SimpleEntity(ExampleSchemata.person),
                         MoreExecutors.directExecutor());
@@ -129,7 +129,7 @@ public class PipelineEngineTest {
                 .build();
         PipelineEngine engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        new EnrichmentList(schema, ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2)),
+                        new PipelineDefinition(schema, ImmutableList.of(enrichmentA1, enrichmentA2, enrichmentB1, enrichmentB2)),
                         calculationFactory,
                         () -> new SimpleEntity(schema),
                         MoreExecutors.directExecutor());
@@ -170,7 +170,7 @@ public class PipelineEngineTest {
                     parameters);
             allEnrichments.add(enrichment);
         }
-        EnrichmentList enrichments = new EnrichmentList(schema, allEnrichments);
+        PipelineDefinition enrichments = new PipelineDefinition(schema, allEnrichments);
 
         SimpleEntity entity = new SimpleEntity(schema);
         entity.setValueOfField(fields.get(0), "A");

@@ -16,13 +16,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 final class GenericPipelineEngine implements PipelineEngine {
 
-    private final EnrichmentList enrichments;
+    private final PipelineDefinition enrichments;
     private final CalculationFactory calculationFactory;
     private final Supplier<EntityFieldReadWriteAccessor> outputFactory;
     private final Executor executor;
 
     GenericPipelineEngine(
-            EnrichmentList enrichments,
+            PipelineDefinition enrichments,
             CalculationFactory calculationFactory,
             Supplier<EntityFieldReadWriteAccessor> outputFactory,
             Executor executor) {
@@ -48,7 +48,7 @@ final class GenericPipelineEngine implements PipelineEngine {
                         future::completeExceptionally,
                         executor);
 
-        Process(EntityFieldReadAccessor inputEntity, EnrichmentList enrichments) {
+        Process(EntityFieldReadAccessor inputEntity, PipelineDefinition enrichments) {
             this.knownFields = new HashSet<>(enrichments.getFixedSchema().getFields());
             this.enrichmentsTriggered = new BitSet(enrichments.getEnrichments().size());
             this.enrichmentsFinished = new BitSet(enrichments.getEnrichments().size());
