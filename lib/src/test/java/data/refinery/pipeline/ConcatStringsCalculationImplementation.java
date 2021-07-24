@@ -1,13 +1,13 @@
 package data.refinery.pipeline;
 
 
-import data.refinery.boilerplate.ConcatStringsCalculation;
+import data.refinery.boilerplate.ConcatStringsCalculationDefinition;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 
 import java.util.concurrent.Executor;
 
-import static data.refinery.boilerplate.ConcatStringsCalculation.*;
+import static data.refinery.boilerplate.ConcatStringsCalculationDefinition.*;
 
 
 public class ConcatStringsCalculationImplementation extends TestableCalculationImplementation {
@@ -22,8 +22,8 @@ public class ConcatStringsCalculationImplementation extends TestableCalculationI
     }
 
     @Override
-    public Calculation getCalculation() {
-        return ConcatStringsCalculation.getInstance();
+    public CalculationDefinition getCalculation() {
+        return ConcatStringsCalculationDefinition.getInstance();
     }
 
     @Override

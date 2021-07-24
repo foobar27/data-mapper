@@ -3,7 +3,7 @@ package data.refinery.pipeline;
 import data.refinery.mapping.ProfunctorEntityMapping;
 import data.refinery.schema.EntitySchema;
 
-public interface Calculation {
+public interface CalculationDefinition {
 
     EntitySchema getInputSchema();
 
@@ -11,8 +11,8 @@ public interface Calculation {
 
     EntitySchema getOutputSchema();
 
-    default Calculation wrap(ProfunctorEntityMapping mapping) {
-        return WrappedCalculation.wrap(this, mapping);
+    default CalculationDefinition wrap(ProfunctorEntityMapping mapping) {
+        return WrappedCalculationDefinition.wrap(this, mapping);
     }
 
 }

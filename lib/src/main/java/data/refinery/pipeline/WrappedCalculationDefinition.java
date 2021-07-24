@@ -5,21 +5,21 @@ import data.refinery.schema.EntitySchema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-final class WrappedCalculation implements Calculation {
+final class WrappedCalculationDefinition implements CalculationDefinition {
 
-    private final Calculation delegate;
+    private final CalculationDefinition delegate;
     private final ProfunctorEntityMapping mapping;
 
-    static WrappedCalculation wrap(Calculation delegate, ProfunctorEntityMapping mapping) {
+    static WrappedCalculationDefinition wrap(CalculationDefinition delegate, ProfunctorEntityMapping mapping) {
         checkNotNull(delegate);
         checkNotNull(mapping);
         // TODO verify schemas match
         // TODO fast path: compose profunctors
         // TODO fast path: if identity mapping
-        return new WrappedCalculation(delegate, mapping);
+        return new WrappedCalculationDefinition(delegate, mapping);
     }
 
-    private WrappedCalculation(Calculation delegate, ProfunctorEntityMapping mapping) {
+    private WrappedCalculationDefinition(CalculationDefinition delegate, ProfunctorEntityMapping mapping) {
         this.delegate = delegate;
         this.mapping = mapping;
     }

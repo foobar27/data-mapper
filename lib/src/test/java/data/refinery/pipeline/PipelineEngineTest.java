@@ -23,12 +23,12 @@ public class PipelineEngineTest {
     @Test
     public void calculateFullName() throws ExecutionException, InterruptedException {
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(ConcatStringsCalculation.getInstance(),
+                .register(ConcatStringsCalculationDefinition.getInstance(),
                         new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
 
-        ConcatStringsCalculation.ParametersSchema parametersSchema = ConcatStringsCalculation.parameterSchema();
+        ConcatStringsCalculationDefinition.ParametersSchema parametersSchema = ConcatStringsCalculationDefinition.parameterSchema();
 
         PojoPerson person = new PojoPerson();
         person.setFirstName("John");
@@ -37,8 +37,8 @@ public class PipelineEngineTest {
         parameters.setValueOfField(parametersSchema.middle(), " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
-                        ConcatStringsCalculation.getInstance(),
-                        ProfunctorCalculationTest.fullNameCalculation),
+                        ConcatStringsCalculationDefinition.getInstance(),
+                        ProfunctorCalculationDefinitionTest.fullNameCalculation),
                 parameters);
 
         PipelineEngine<ImmutablePerson, ImmutablePerson.Builder> engine = new PipelineEngineFactory()
@@ -65,9 +65,9 @@ public class PipelineEngineTest {
         Field b2 = new NamedField("b2");
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", ImmutableList.of(a0, a1, a2, b0, b1, b2));
 
-        AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
-        AppendConstantCalculation.ParametersSchema parametersSchema = AppendConstantCalculation.parameterSchema();
-        AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
+        AppendConstantCalculationDefinition.InputSchema inputSchema = AppendConstantCalculationDefinition.inputSchema();
+        AppendConstantCalculationDefinition.ParametersSchema parametersSchema = AppendConstantCalculationDefinition.parameterSchema();
+        AppendConstantCalculationDefinition.OutputSchema outputSchema = AppendConstantCalculationDefinition.outputSchema();
 
         SimpleEntity parametersX = new SimpleEntity(parametersSchema);
         parametersX.setValueOfField(parametersSchema.constant(), "X");
@@ -76,7 +76,7 @@ public class PipelineEngineTest {
         parametersY.setValueOfField(parametersSchema.constant(), "Y");
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
-                new ImmutableMappedCalculation(AppendConstantCalculation.getInstance(),
+                new ImmutableMappedCalculation(AppendConstantCalculationDefinition.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a0, inputSchema.value())
                                 .rightMapField(outputSchema.value(), a1)
@@ -84,7 +84,7 @@ public class PipelineEngineTest {
                 parametersX);
         Enrichment enrichmentA2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
-                        AppendConstantCalculation.getInstance(),
+                        AppendConstantCalculationDefinition.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a1, inputSchema.value())
                                 .rightMapField(outputSchema.value(), a2)
@@ -92,7 +92,7 @@ public class PipelineEngineTest {
                 parametersY);
         Enrichment enrichmentB1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
-                        AppendConstantCalculation.getInstance(),
+                        AppendConstantCalculationDefinition.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b0, inputSchema.value())
                                 .rightMapField(outputSchema.value(), b1)
@@ -100,7 +100,7 @@ public class PipelineEngineTest {
                 parametersX);
         Enrichment enrichmentB2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
-                        AppendConstantCalculation.getInstance(),
+                        AppendConstantCalculationDefinition.getInstance(),
                         ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b1, inputSchema.value())
                                 .rightMapField(outputSchema.value(), b2)
@@ -112,7 +112,7 @@ public class PipelineEngineTest {
         entity.setValueOfField(b0, "B");
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(AppendConstantCalculation.getInstance(),
+                .register(AppendConstantCalculationDefinition.getInstance(),
                         new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();
@@ -141,9 +141,9 @@ public class PipelineEngineTest {
         }
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", fields);
 
-        AppendConstantCalculation.InputSchema inputSchema = AppendConstantCalculation.inputSchema();
-        AppendConstantCalculation.ParametersSchema parametersSchema = AppendConstantCalculation.parameterSchema();
-        AppendConstantCalculation.OutputSchema outputSchema = AppendConstantCalculation.outputSchema();
+        AppendConstantCalculationDefinition.InputSchema inputSchema = AppendConstantCalculationDefinition.inputSchema();
+        AppendConstantCalculationDefinition.ParametersSchema parametersSchema = AppendConstantCalculationDefinition.parameterSchema();
+        AppendConstantCalculationDefinition.OutputSchema outputSchema = AppendConstantCalculationDefinition.outputSchema();
 
         SimpleEntity parameters = new SimpleEntity(parametersSchema);
         parameters.setValueOfField(parametersSchema.constant(), ""); // do not append anything real
@@ -152,7 +152,7 @@ public class PipelineEngineTest {
         for (int i = 1; i < numberOfFields; ++i) {
             Enrichment enrichment = new ImmutableEnrichment(
                     new ImmutableMappedCalculation(
-                            AppendConstantCalculation.getInstance(),
+                            AppendConstantCalculationDefinition.getInstance(),
                             ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
                                     .leftMapField(fields.get(i - 1), inputSchema.value())
                                     .rightMapField(outputSchema.value(), fields.get(i))
@@ -166,7 +166,7 @@ public class PipelineEngineTest {
         entity.setValueOfField(fields.get(0), "A");
 
         CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(AppendConstantCalculation.getInstance(),
+                .register(AppendConstantCalculationDefinition.getInstance(),
                         new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
                 .build();

@@ -1,13 +1,13 @@
 package data.refinery.boilerplate;
 
 import data.refinery.conversion.EntityFactory;
-import data.refinery.pipeline.Calculation;
+import data.refinery.pipeline.CalculationDefinition;
 import data.refinery.schema.NoSuchFieldException;
 import data.refinery.schema.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class AppendConstantCalculation implements Calculation {
+public class AppendConstantCalculationDefinition implements CalculationDefinition {
 
     public static final class InputSchema extends FluentEntitySchema {
 
@@ -469,13 +469,13 @@ public class AppendConstantCalculation implements Calculation {
         return OutputSchema.instance;
     }
 
-    private static final AppendConstantCalculation instance = new AppendConstantCalculation();
+    private static final AppendConstantCalculationDefinition instance = new AppendConstantCalculationDefinition();
 
-    public static AppendConstantCalculation getInstance() {
+    public static AppendConstantCalculationDefinition getInstance() {
         return instance;
     }
 
-    private AppendConstantCalculation() {
+    private AppendConstantCalculationDefinition() {
         // inhibit public constructor
     }
 

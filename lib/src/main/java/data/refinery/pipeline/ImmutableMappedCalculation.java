@@ -6,17 +6,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ImmutableMappedCalculation implements MappedCalculation {
 
-    private final Calculation calculation;
+    private final CalculationDefinition calculationDefinition;
     private final ProfunctorEntityMapping mapping;
 
-    public ImmutableMappedCalculation(Calculation calculation, ProfunctorEntityMapping mapping) {
-        this.calculation = checkNotNull(calculation);
+    public ImmutableMappedCalculation(CalculationDefinition calculationDefinition, ProfunctorEntityMapping mapping) {
+        this.calculationDefinition = checkNotNull(calculationDefinition);
         this.mapping = checkNotNull(mapping);
     }
 
     @Override
-    public Calculation getCalculation() {
-        return calculation;
+    public CalculationDefinition getCalculation() {
+        return calculationDefinition;
     }
 
     @Override

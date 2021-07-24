@@ -1,13 +1,13 @@
 package data.refinery.boilerplate;
 
 import data.refinery.conversion.EntityFactory;
-import data.refinery.pipeline.Calculation;
+import data.refinery.pipeline.CalculationDefinition;
 import data.refinery.schema.NoSuchFieldException;
 import data.refinery.schema.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class ConcatStringsCalculation implements Calculation {
+public class ConcatStringsCalculationDefinition implements CalculationDefinition {
 
     public static final class InputSchema extends FluentEntitySchema {
 
@@ -496,13 +496,13 @@ public class ConcatStringsCalculation implements Calculation {
         return OutputSchema.instance;
     }
 
-    private static final ConcatStringsCalculation instance = new ConcatStringsCalculation();
+    private static final ConcatStringsCalculationDefinition instance = new ConcatStringsCalculationDefinition();
 
-    public static ConcatStringsCalculation getInstance() {
+    public static ConcatStringsCalculationDefinition getInstance() {
         return instance;
     }
 
-    private ConcatStringsCalculation() {
+    private ConcatStringsCalculationDefinition() {
         // inhibit public constructor
     }
 

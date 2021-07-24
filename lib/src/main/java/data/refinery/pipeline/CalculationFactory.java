@@ -8,17 +8,17 @@ import java.util.Map;
 import java.util.function.Function;
 
 // TODO calculations take parameters (as Entity? eat your own dogfood!)
-public final class CalculationFactory implements Function<Calculation, CalculationImplementation> {
+public final class CalculationFactory implements Function<CalculationDefinition, CalculationImplementation> {
 
-    private final Map<Calculation, CalculationImplementation> map;
+    private final Map<CalculationDefinition, CalculationImplementation> map;
 
     private CalculationFactory(Builder builder) {
         this.map = ImmutableMap.copyOf(builder.map);
     }
 
     @Override
-    public CalculationImplementation apply(Calculation calculation) {
-        return map.get(calculation);
+    public CalculationImplementation apply(CalculationDefinition calculationDefinition) {
+        return map.get(calculationDefinition);
     }
 
     public static Builder newBuilder() {
@@ -38,7 +38,7 @@ public final class CalculationFactory implements Function<Calculation, Calculati
 
     public static final class Builder {
 
-        private final Map<Calculation, CalculationImplementation> map;
+        private final Map<CalculationDefinition, CalculationImplementation> map;
 
         private Builder() {
             this.map = new HashMap<>();
@@ -48,8 +48,8 @@ public final class CalculationFactory implements Function<Calculation, Calculati
             this.map = new HashMap<>(factory.map);
         }
 
-        public Builder register(Calculation calculation, CalculationImplementation implementation) {
-            this.map.put(calculation, implementation);
+        public Builder register(CalculationDefinition calculationDefinition, CalculationImplementation implementation) {
+            this.map.put(calculationDefinition, implementation);
             return this;
         }
 

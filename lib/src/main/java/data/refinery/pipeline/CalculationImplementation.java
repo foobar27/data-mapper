@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 
 public interface CalculationImplementation extends BiFunction<EntityFieldReadAccessor, EntityFieldReadAccessor, CompletableFuture<EntityFieldReadAccessor>> {
 
-    Calculation getCalculation();
+    CalculationDefinition getCalculation();
 
     default CalculationImplementation wrap(ProfunctorEntityMapping mapping) {
         return WrappedCalculationImplementation.wrapCalculation(this, mapping);

@@ -1,12 +1,12 @@
 package data.refinery.pipeline;
 
-import data.refinery.boilerplate.AppendConstantCalculation;
+import data.refinery.boilerplate.AppendConstantCalculationDefinition;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 
 import java.util.concurrent.Executor;
 
-import static data.refinery.boilerplate.AppendConstantCalculation.*;
+import static data.refinery.boilerplate.AppendConstantCalculationDefinition.*;
 
 public class AppendConstantCalculationImplementation extends TestableCalculationImplementation {
 
@@ -20,8 +20,8 @@ public class AppendConstantCalculationImplementation extends TestableCalculation
     }
 
     @Override
-    public Calculation getCalculation() {
-        return AppendConstantCalculation.getInstance();
+    public CalculationDefinition getCalculation() {
+        return AppendConstantCalculationDefinition.getInstance();
     }
 
     @Override

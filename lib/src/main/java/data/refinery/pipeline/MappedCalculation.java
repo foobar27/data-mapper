@@ -4,7 +4,7 @@ import data.refinery.mapping.ProfunctorEntityMapping;
 
 public interface MappedCalculation {
 
-    Calculation getCalculation();
+    CalculationDefinition getCalculation();
 
     /**
      * Gets the mapping from the relevant subset of the entity to the input of the calculation,

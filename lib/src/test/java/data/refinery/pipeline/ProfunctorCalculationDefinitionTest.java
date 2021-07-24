@@ -2,7 +2,7 @@ package data.refinery.pipeline;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.MoreExecutors;
-import data.refinery.boilerplate.ConcatStringsCalculation;
+import data.refinery.boilerplate.ConcatStringsCalculationDefinition;
 import data.refinery.mapping.ImmutableProfunctorEntityMapping;
 import data.refinery.mapping.ProfunctorEntityMapping;
 import data.refinery.schema.EntityFieldReadAccessor;
@@ -17,16 +17,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 // TODO shouldn't this be EnrichmentTest?
-public class ProfunctorCalculationTest {
+public class ProfunctorCalculationDefinitionTest {
 
     public static final ProfunctorEntityMapping fullNameCalculation = ImmutableProfunctorEntityMapping.newBuilder(
             personSchema().filterKeys(ImmutableSet.of(personSchema().firstName(), personSchema().lastName())),
-            ConcatStringsCalculation.inputSchema(),
-            ConcatStringsCalculation.outputSchema(),
+            ConcatStringsCalculationDefinition.inputSchema(),
+            ConcatStringsCalculationDefinition.outputSchema(),
             personSchema().filterKeys(ImmutableSet.of(personSchema().fullName())))
-            .leftMapField(personSchema().firstName(), ConcatStringsCalculation.inputSchema().left())
-            .leftMapField(personSchema().lastName(), ConcatStringsCalculation.inputSchema().right())
-            .rightMapField(ConcatStringsCalculation.outputSchema().value(), personSchema().fullName())
+            .leftMapField(personSchema().firstName(), ConcatStringsCalculationDefinition.inputSchema().left())
+            .leftMapField(personSchema().lastName(), ConcatStringsCalculationDefinition.inputSchema().right())
+            .rightMapField(ConcatStringsCalculationDefinition.outputSchema().value(), personSchema().fullName())
             .verifyNormalizeAndBuild();
 
     @Test
@@ -38,7 +38,7 @@ public class ProfunctorCalculationTest {
         person.setValueOfField(personSchema().firstName(), "John");
         person.setValueOfField(personSchema().lastName(), "Doe");
 
-        ConcatStringsCalculation.ParametersSchema parametersSchema = ConcatStringsCalculation.parameterSchema();
+        ConcatStringsCalculationDefinition.ParametersSchema parametersSchema = ConcatStringsCalculationDefinition.parameterSchema();
 
         SimpleEntity parameters = new SimpleEntity(parametersSchema);
         parameters.setValueOfField(parametersSchema.middle(), " ");

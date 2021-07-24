@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 final class WrappedCalculationImplementation implements CalculationImplementation {
 
     private final CalculationImplementation delegate;
-    private final Calculation calculation;
+    private final CalculationDefinition calculationDefinition;
     private final ProfunctorEntityMapping mapping;
 
     public static CalculationImplementation wrapCalculation(CalculationImplementation delegate, ProfunctorEntityMapping mapping) {
@@ -26,12 +26,12 @@ final class WrappedCalculationImplementation implements CalculationImplementatio
     private WrappedCalculationImplementation(CalculationImplementation delegate, ProfunctorEntityMapping mapping) {
         this.delegate = delegate;
         this.mapping = mapping;
-        this.calculation = delegate.getCalculation().wrap(mapping);
+        this.calculationDefinition = delegate.getCalculation().wrap(mapping);
     }
 
     @Override
-    public Calculation getCalculation() {
-        return calculation;
+    public CalculationDefinition getCalculation() {
+        return calculationDefinition;
     }
 
     @Override
