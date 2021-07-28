@@ -20,29 +20,52 @@ import static org.hamcrest.Matchers.is;
 
 public class PipelineEngineTest {
 
+    private final CalculationFactory concatCalculationFactory = CalculationFactory.newBuilder()
+            .register(ConcatStringsCalculationDefinition.getInstance(),
+                    new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
+                            .enableAutoApply())
+            .build();
+
+    private final SimpleEntity parameters = new SimpleEntity(ConcatStringsCalculationDefinition.parameterSchema());
+    private final Enrichment fullNameEnrichment = new ImmutableEnrichment(
+            MappedCalculationTest.mappedCalculation,
+            parameters);
+
+    public PipelineEngineTest() {
+        parameters.setValueOfField(ConcatStringsCalculationDefinition.parameterSchema().middle(), " ");
+    }
+
     @Test
     public void calculateFullName() throws ExecutionException, InterruptedException {
-        CalculationFactory calculationFactory = CalculationFactory.newBuilder()
-                .register(ConcatStringsCalculationDefinition.getInstance(),
-                        new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
-                                .enableAutoApply())
-                .build();
-
-        ConcatStringsCalculationDefinition.ParametersSchema parametersSchema = ConcatStringsCalculationDefinition.parameterSchema();
-
         PojoPerson person = new PojoPerson();
         person.setFirstName("John");
         person.setLastName("Doe");
-        SimpleEntity parameters = new SimpleEntity(parametersSchema);
-        parameters.setValueOfField(parametersSchema.middle(), " ");
-        Enrichment fullNameEnrichment = new ImmutableEnrichment(
-                MappedCalculationTest.mappedCalculation,
-                parameters);
 
         PipelineEngine<ImmutablePerson, ImmutablePerson.Builder> engine = new PipelineEngineFactory()
                 .createPipelineEngine(
                         new PipelineDefinition(personSchema(), ImmutableList.of(fullNameEnrichment)),
-                        calculationFactory,
+                        concatCalculationFactory,
+                        PersonFactory.getInstance(),
+                        MoreExecutors.directExecutor());
+
+        ImmutablePerson output = engine.process(person).get();
+        assertThat(output.getFirstName(), is("John"));
+        assertThat(output.getLastName(), is("Doe"));
+        assertThat(output.getFullName(), is("John Doe"));
+    }
+
+    @Test
+    public void valueOrEnrichmentTest() throws ExecutionException, InterruptedException {
+        PersonWithEnrichments person = new PersonWithEnrichments();
+        person.firstName().set("John");
+        person.lastName().set("Doe");
+        person.fullName().use(fullNameEnrichment);
+        person.age().set(0); // TODO it should also work without this!
+
+        PipelineEngine<ImmutablePerson, ImmutablePerson.Builder> engine = new PipelineEngineFactory()
+                .createPipelineEngine(
+                        new PipelineDefinition(personSchema(), person.getEnrichments()),
+                        concatCalculationFactory,
                         PersonFactory.getInstance(),
                         MoreExecutors.directExecutor());
 
