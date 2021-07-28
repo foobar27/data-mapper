@@ -2,6 +2,7 @@ package data.refinery.boilerplate;
 
 import data.refinery.schema.EntityFieldWriteAccessor;
 import data.refinery.schema.Field;
+import data.refinery.schema.NoSuchFieldException;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
@@ -18,6 +19,8 @@ public interface DocumentWriteAccessors extends EntityFieldWriteAccessor {
 
     void setContent(String value);
 
+    void setIsComment(boolean value);
+
     default DocumentSchema getSchema() {
         return documentSchema();
     }
@@ -31,6 +34,10 @@ public interface DocumentWriteAccessors extends EntityFieldWriteAccessor {
             setTitle((String) value);
         } else if (field == documentSchema().content()) {
             setContent((String) value);
+        } else if (field == documentSchema().isComment()) {
+            setIsComment((Boolean) value);
+        } else {
+            throw new NoSuchFieldException(getSchema(), field);
         }
     }
 

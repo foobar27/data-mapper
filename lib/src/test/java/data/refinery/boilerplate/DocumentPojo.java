@@ -2,6 +2,7 @@ package data.refinery.boilerplate;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 
 public final class DocumentPojo implements DocumentReadWriteAccessors {
 
@@ -9,6 +10,7 @@ public final class DocumentPojo implements DocumentReadWriteAccessors {
     private ZonedDateTime publicationDate;
     private String title;
     private String content;
+    private HashSet<DocumentFlags> flags = new HashSet<>();
 
     @Override
     public URL getUrl() {
@@ -31,6 +33,11 @@ public final class DocumentPojo implements DocumentReadWriteAccessors {
     }
 
     @Override
+    public boolean isComment() {
+        return flags.contains(DocumentFlags.IsComment);
+    }
+
+    @Override
     public void setUrl(URL value) {
         this.url = value;
     }
@@ -48,6 +55,15 @@ public final class DocumentPojo implements DocumentReadWriteAccessors {
     @Override
     public void setContent(String value) {
         this.content = value;
+    }
+
+    @Override
+    public void setIsComment(boolean value) {
+        if (value) {
+            flags.add(DocumentFlags.IsComment);
+        } else {
+            flags.remove(DocumentFlags.IsComment);
+        }
     }
 
     // TODO toString, hashCode, equals

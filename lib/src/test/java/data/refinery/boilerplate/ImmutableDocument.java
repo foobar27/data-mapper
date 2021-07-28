@@ -1,9 +1,12 @@
 package data.refinery.boilerplate;
 
+import com.google.common.collect.ImmutableSet;
 import data.refinery.schema.EntityFieldReadAccessor;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import static data.refinery.boilerplate.DocumentSchema.documentSchema;
 
@@ -13,12 +16,15 @@ public final class ImmutableDocument implements DocumentReadAccessors {
     private final ZonedDateTime publicationDate;
     private final String title;
     private final String content;
+    ;
+    private final Set<DocumentFlags> flags;
 
     private ImmutableDocument(Builder builder) {
         this.url = builder.url;
         this.publicationDate = builder.publicationDate;
         this.title = builder.title;
         this.content = builder.content;
+        this.flags = ImmutableSet.copyOf(builder.flags);
     }
 
     @Override
@@ -41,6 +47,11 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         return content;
     }
 
+    @Override
+    public boolean isComment() {
+        return flags.contains(DocumentFlags.IsComment);
+    }
+
     // TODO toString, hashCode, equals
 
     public static Builder newBuilder() {
@@ -61,9 +72,10 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         private ZonedDateTime publicationDate;
         private String title;
         private String content;
+        private Set<DocumentFlags> flags;
 
         private Builder() {
-            // nothing to do
+            this.flags = new HashSet<>();
         }
 
         private Builder(ImmutableDocument document) {
@@ -71,6 +83,7 @@ public final class ImmutableDocument implements DocumentReadAccessors {
             this.publicationDate = document.publicationDate;
             this.title = document.title;
             this.content = document.content;
+            this.flags = new HashSet<>(document.flags);
         }
 
         private Builder(EntityFieldReadAccessor document) {
@@ -101,6 +114,11 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         }
 
         @Override
+        public boolean isComment() {
+            return flags.contains(DocumentFlags.IsComment);
+        }
+
+        @Override
         public void setUrl(URL value) {
             this.url = value;
         }
@@ -118,6 +136,15 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         @Override
         public void setContent(String value) {
             this.content = value;
+        }
+
+        @Override
+        public void setIsComment(boolean value) {
+            if (value) {
+                flags.add(DocumentFlags.IsComment);
+            } else {
+                flags.remove(DocumentFlags.IsComment);
+            }
         }
 
         public ImmutableDocument build() {

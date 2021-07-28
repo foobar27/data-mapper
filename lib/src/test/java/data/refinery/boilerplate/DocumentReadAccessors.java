@@ -20,6 +20,8 @@ public interface DocumentReadAccessors extends EntityFieldReadAccessor {
 
     String getContent();
 
+    boolean isComment();
+
     @Override
     default DocumentSchema getSchema() {
         return documentSchema();
@@ -35,6 +37,8 @@ public interface DocumentReadAccessors extends EntityFieldReadAccessor {
             return getTitle();
         } else if (field == documentSchema().content()) {
             return getContent();
+        } else if (field == documentSchema().isComment()) {
+            return isComment();
         }
         throw new NoSuchFieldException(getSchema(), field);
     }

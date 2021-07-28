@@ -16,6 +16,7 @@ public final class DocumentSchema extends FluentEntitySchema {
     private final Field publicationDate = register("publicationDate");
     private final Field title = register("title");
     private final Field content = register("content");
+    private final Field isComment = register("isComment");
 
     private DocumentSchema() {
         super("Document");
@@ -37,5 +38,8 @@ public final class DocumentSchema extends FluentEntitySchema {
         return content;
     }
 
+    public Field isComment() {
+        return isComment;
+    }
 
 }
