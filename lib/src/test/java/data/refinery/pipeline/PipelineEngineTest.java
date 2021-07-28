@@ -36,9 +36,7 @@ public class PipelineEngineTest {
         SimpleEntity parameters = new SimpleEntity(parametersSchema);
         parameters.setValueOfField(parametersSchema.middle(), " ");
         Enrichment fullNameEnrichment = new ImmutableEnrichment(
-                new ImmutableMappedCalculation(
-                        ConcatStringsCalculationDefinition.getInstance(),
-                        ProfunctorCalculationDefinitionTest.fullNameCalculation),
+                MappedCalculationTest.mappedCalculation,
                 parameters);
 
         PipelineEngine<ImmutablePerson, ImmutablePerson.Builder> engine = new PipelineEngineFactory()

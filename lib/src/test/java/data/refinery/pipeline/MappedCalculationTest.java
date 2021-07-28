@@ -3,8 +3,8 @@ package data.refinery.pipeline;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.MoreExecutors;
 import data.refinery.boilerplate.ConcatStringsCalculationDefinition;
-import data.refinery.mapping.ImmutableEntityAdapter;
 import data.refinery.mapping.EntityAdapter;
+import data.refinery.mapping.ImmutableEntityAdapter;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 import org.junit.jupiter.api.Test;
@@ -16,24 +16,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-// TODO shouldn't this be EnrichmentTest?
-public class ProfunctorCalculationDefinitionTest {
+public class MappedCalculationTest {
 
-    public static final EntityAdapter fullNameCalculation = ImmutableEntityAdapter.newBuilder(
-            personSchema().filterKeys(ImmutableSet.of(personSchema().firstName(), personSchema().lastName())),
-            ConcatStringsCalculationDefinition.inputSchema(),
-            ConcatStringsCalculationDefinition.outputSchema(),
-            personSchema().filterKeys(ImmutableSet.of(personSchema().fullName())))
-            .leftMapField(personSchema().firstName(), ConcatStringsCalculationDefinition.inputSchema().left())
-            .leftMapField(personSchema().lastName(), ConcatStringsCalculationDefinition.inputSchema().right())
-            .rightMapField(ConcatStringsCalculationDefinition.outputSchema().value(), personSchema().fullName())
-            .verifyNormalizeAndBuild();
+    public static final MappedCalculation mappedCalculation = new ImmutableMappedCalculation(
+            ConcatStringsCalculationDefinition.getInstance(),
+            ImmutableEntityAdapter.newBuilder(
+                    personSchema().filterKeys(ImmutableSet.of(personSchema().firstName(), personSchema().lastName())),
+                    ConcatStringsCalculationDefinition.inputSchema(),
+                    ConcatStringsCalculationDefinition.outputSchema(),
+                    personSchema().filterKeys(ImmutableSet.of(personSchema().fullName())))
+                    .leftMapField(personSchema().firstName(), ConcatStringsCalculationDefinition.inputSchema().left())
+                    .leftMapField(personSchema().lastName(), ConcatStringsCalculationDefinition.inputSchema().right())
+                    .rightMapField(ConcatStringsCalculationDefinition.outputSchema().value(), personSchema().fullName())
+                    .verifyNormalizeAndBuild());
 
     @Test
     public void concatenateFirstAndLastName() throws ExecutionException, InterruptedException {
         CalculationImplementation calculation = new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
                 .enableAutoApply()
-                .wrap(fullNameCalculation);
+                .wrap(mappedCalculation.getMapping());
         SimpleEntity person = new SimpleEntity(personSchema());
         person.setValueOfField(personSchema().firstName(), "John");
         person.setValueOfField(personSchema().lastName(), "Doe");
