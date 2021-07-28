@@ -1,6 +1,5 @@
 package data.refinery.pipeline;
 
-import data.refinery.mapping.ProfunctorEntityMapping;
 import data.refinery.schema.EntityFieldReadAccessor;
 
 import static com.google.common.base.Preconditions.checkArgument;

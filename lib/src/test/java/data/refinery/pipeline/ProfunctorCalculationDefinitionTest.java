@@ -3,8 +3,8 @@ package data.refinery.pipeline;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.MoreExecutors;
 import data.refinery.boilerplate.ConcatStringsCalculationDefinition;
-import data.refinery.mapping.ImmutableProfunctorEntityMapping;
-import data.refinery.mapping.ProfunctorEntityMapping;
+import data.refinery.mapping.ImmutableEntityAdapter;
+import data.refinery.mapping.EntityAdapter;
 import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.SimpleEntity;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.is;
 // TODO shouldn't this be EnrichmentTest?
 public class ProfunctorCalculationDefinitionTest {
 
-    public static final ProfunctorEntityMapping fullNameCalculation = ImmutableProfunctorEntityMapping.newBuilder(
+    public static final EntityAdapter fullNameCalculation = ImmutableEntityAdapter.newBuilder(
             personSchema().filterKeys(ImmutableSet.of(personSchema().firstName(), personSchema().lastName())),
             ConcatStringsCalculationDefinition.inputSchema(),
             ConcatStringsCalculationDefinition.outputSchema(),

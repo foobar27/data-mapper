@@ -1,6 +1,6 @@
 package data.refinery.pipeline;
 
-import data.refinery.mapping.ProfunctorEntityMapping;
+import data.refinery.mapping.EntityAdapter;
 import data.refinery.schema.EntitySchema;
 
 public interface CalculationDefinition {
@@ -11,7 +11,7 @@ public interface CalculationDefinition {
 
     EntitySchema getOutputSchema();
 
-    default CalculationDefinition wrap(ProfunctorEntityMapping mapping) {
+    default CalculationDefinition wrap(EntityAdapter mapping) {
         return WrappedCalculationDefinition.wrap(this, mapping);
     }
 

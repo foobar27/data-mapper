@@ -1,6 +1,6 @@
 package data.refinery.pipeline;
 
-import data.refinery.mapping.ProfunctorEntityMapping;
+import data.refinery.mapping.EntityAdapter;
 import data.refinery.schema.EntityFieldReadAccessor;
 
 import java.util.concurrent.CompletableFuture;
@@ -10,7 +10,7 @@ public interface CalculationImplementation extends BiFunction<EntityFieldReadAcc
 
     CalculationDefinition getCalculation();
 
-    default CalculationImplementation wrap(ProfunctorEntityMapping mapping) {
+    default CalculationImplementation wrap(EntityAdapter mapping) {
         return WrappedCalculationImplementation.wrapCalculation(this, mapping);
     }
 

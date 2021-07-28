@@ -1,15 +1,15 @@
 package data.refinery.pipeline;
 
-import data.refinery.mapping.ProfunctorEntityMapping;
+import data.refinery.mapping.EntityAdapter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ImmutableMappedCalculation implements MappedCalculation {
 
     private final CalculationDefinition calculationDefinition;
-    private final ProfunctorEntityMapping mapping;
+    private final EntityAdapter mapping;
 
-    public ImmutableMappedCalculation(CalculationDefinition calculationDefinition, ProfunctorEntityMapping mapping) {
+    public ImmutableMappedCalculation(CalculationDefinition calculationDefinition, EntityAdapter mapping) {
         this.calculationDefinition = checkNotNull(calculationDefinition);
         this.mapping = checkNotNull(mapping);
     }
@@ -20,7 +20,7 @@ public class ImmutableMappedCalculation implements MappedCalculation {
     }
 
     @Override
-    public ProfunctorEntityMapping getMapping() {
+    public EntityAdapter getMapping() {
         return mapping;
     }
 

@@ -6,12 +6,12 @@ import data.refinery.schema.Field;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping {
+public class ImmutableEntityAdapter implements EntityAdapter {
 
     private final ImmutableEntityMapping leftMapping;
     private final ImmutableEntityMapping rightMapping;
 
-    private ImmutableProfunctorEntityMapping(Builder builder) {
+    private ImmutableEntityAdapter(Builder builder) {
         this.leftMapping = builder.leftMapping.normalizeInputSchema().build();
         this.rightMapping = builder.rightMapping.normalizeOutputSchema().build();
     }
@@ -55,7 +55,7 @@ public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping
             this.rightMapping = ImmutableEntityMapping.newBuilder(rightInputSchema, rightOutputSchema);
         }
 
-        private Builder(ImmutableProfunctorEntityMapping mapping) {
+        private Builder(ImmutableEntityAdapter mapping) {
             this.leftMapping = mapping.getLeftMapping().toBuilder();
             this.rightMapping = mapping.getRightMapping().toBuilder();
         }
@@ -70,12 +70,12 @@ public class ImmutableProfunctorEntityMapping implements ProfunctorEntityMapping
             return this;
         }
 
-        public ImmutableProfunctorEntityMapping verifyNormalizeAndBuild() {
+        public ImmutableEntityAdapter verifyNormalizeAndBuild() {
             checkArgument(leftMapping.isOutputSchemaComplete());
             checkArgument(rightMapping.isInputSchemaComplete());
             leftMapping.normalizeInputSchema();
             rightMapping.normalizeOutputSchema();
-            return new ImmutableProfunctorEntityMapping(this);
+            return new ImmutableEntityAdapter(this);
         }
 
     }

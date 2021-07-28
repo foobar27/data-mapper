@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
 import data.refinery.boilerplate.*;
 import data.refinery.conversion.SimpleEntityFactory;
-import data.refinery.mapping.ImmutableProfunctorEntityMapping;
+import data.refinery.mapping.ImmutableEntityAdapter;
 import data.refinery.schema.*;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +77,7 @@ public class PipelineEngineTest {
 
         Enrichment enrichmentA1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(AppendConstantCalculationDefinition.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
+                        ImmutableEntityAdapter.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a0, inputSchema.value())
                                 .rightMapField(outputSchema.value(), a1)
                                 .verifyNormalizeAndBuild()),
@@ -85,7 +85,7 @@ public class PipelineEngineTest {
         Enrichment enrichmentA2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculationDefinition.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
+                        ImmutableEntityAdapter.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(a1, inputSchema.value())
                                 .rightMapField(outputSchema.value(), a2)
                                 .verifyNormalizeAndBuild()),
@@ -93,7 +93,7 @@ public class PipelineEngineTest {
         Enrichment enrichmentB1 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculationDefinition.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
+                        ImmutableEntityAdapter.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b0, inputSchema.value())
                                 .rightMapField(outputSchema.value(), b1)
                                 .verifyNormalizeAndBuild()),
@@ -101,7 +101,7 @@ public class PipelineEngineTest {
         Enrichment enrichmentB2 = new ImmutableEnrichment(
                 new ImmutableMappedCalculation(
                         AppendConstantCalculationDefinition.getInstance(),
-                        ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
+                        ImmutableEntityAdapter.newBuilder(schema, inputSchema, outputSchema, schema)
                                 .leftMapField(b1, inputSchema.value())
                                 .rightMapField(outputSchema.value(), b2)
                                 .verifyNormalizeAndBuild()),
@@ -153,7 +153,7 @@ public class PipelineEngineTest {
             Enrichment enrichment = new ImmutableEnrichment(
                     new ImmutableMappedCalculation(
                             AppendConstantCalculationDefinition.getInstance(),
-                            ImmutableProfunctorEntityMapping.newBuilder(schema, inputSchema, outputSchema, schema)
+                            ImmutableEntityAdapter.newBuilder(schema, inputSchema, outputSchema, schema)
                                     .leftMapField(fields.get(i - 1), inputSchema.value())
                                     .rightMapField(outputSchema.value(), fields.get(i))
                                     .verifyNormalizeAndBuild()),

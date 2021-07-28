@@ -1,7 +1,6 @@
 package data.refinery.mapping;
 
-// TODO is this really a Profunctor? not an End?
-public interface ProfunctorEntityMapping {
+public interface EntityAdapter {
 
     /**
      * Gets the mapping from the relevant subset of the entity to the input of the calculation.

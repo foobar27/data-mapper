@@ -14,5 +14,5 @@
 - EnrichedCalculation: a MappedCalculation with the parameters
 - Enrichment: a calculationDefinition 
 - EntityMapping: reversible mapping
-- Profunctor: wrapper for a calculationDefinition (which maps entity fields to
+- Adapter: wrapper for a calculationDefinition (which maps entity fields to
   the input, and output fields to the entity fields)

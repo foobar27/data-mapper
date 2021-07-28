@@ -1,6 +1,6 @@
 package data.refinery.pipeline;
 
-import data.refinery.mapping.ProfunctorEntityMapping;
+import data.refinery.mapping.EntityAdapter;
 import data.refinery.schema.EntitySchema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,18 +8,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 final class WrappedCalculationDefinition implements CalculationDefinition {
 
     private final CalculationDefinition delegate;
-    private final ProfunctorEntityMapping mapping;
+    private final EntityAdapter mapping;
 
-    static WrappedCalculationDefinition wrap(CalculationDefinition delegate, ProfunctorEntityMapping mapping) {
+    static WrappedCalculationDefinition wrap(CalculationDefinition delegate, EntityAdapter mapping) {
         checkNotNull(delegate);
         checkNotNull(mapping);
         // TODO verify schemas match
-        // TODO fast path: compose profunctors
+        // TODO fast path: compose adapters
         // TODO fast path: if identity mapping
         return new WrappedCalculationDefinition(delegate, mapping);
     }
 
-    private WrappedCalculationDefinition(CalculationDefinition delegate, ProfunctorEntityMapping mapping) {
+    private WrappedCalculationDefinition(CalculationDefinition delegate, EntityAdapter mapping) {
         this.delegate = delegate;
         this.mapping = mapping;
     }
