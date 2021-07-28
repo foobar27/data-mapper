@@ -5,14 +5,14 @@ import data.refinery.schema.EntityFieldReadAccessor;
 import data.refinery.schema.Field;
 import data.refinery.schema.NoSuchFieldException;
 
-import java.net.URI;
+import java.net.URL;
 import java.time.ZonedDateTime;
 
 import static data.refinery.boilerplate.DocumentSchema.documentSchema;
 
 public interface DocumentReadAccessors extends EntityFieldReadAccessor {
 
-    URI getUrl();
+    URL getUrl();
 
     ZonedDateTime getPublicationDate();
 

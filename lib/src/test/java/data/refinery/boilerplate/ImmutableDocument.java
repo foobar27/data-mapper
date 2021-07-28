@@ -2,14 +2,14 @@ package data.refinery.boilerplate;
 
 import data.refinery.schema.EntityFieldReadAccessor;
 
-import java.net.URI;
+import java.net.URL;
 import java.time.ZonedDateTime;
 
 import static data.refinery.boilerplate.DocumentSchema.documentSchema;
 
 public final class ImmutableDocument implements DocumentReadAccessors {
 
-    private final URI url;
+    private final URL url;
     private final ZonedDateTime publicationDate;
     private final String title;
     private final String content;
@@ -22,7 +22,7 @@ public final class ImmutableDocument implements DocumentReadAccessors {
     }
 
     @Override
-    public URI getUrl() {
+    public URL getUrl() {
         return url;
     }
 
@@ -57,7 +57,7 @@ public final class ImmutableDocument implements DocumentReadAccessors {
 
     public static final class Builder implements DocumentReadWriteAccessors {
 
-        private URI url;
+        private URL url;
         private ZonedDateTime publicationDate;
         private String title;
         private String content;
@@ -74,14 +74,14 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         }
 
         private Builder(EntityFieldReadAccessor document) {
-            this.url = (URI) document.getValueOfField(documentSchema().url());
+            this.url = (URL) document.getValueOfField(documentSchema().url());
             this.publicationDate = (ZonedDateTime) document.getValueOfField(documentSchema().publicationDate());
             this.title = (String) document.getValueOfField(documentSchema().title());
             this.content = (String) document.getValueOfField(documentSchema().content());
         }
 
         @Override
-        public URI getUrl() {
+        public URL getUrl() {
             return url;
         }
 
@@ -101,7 +101,7 @@ public final class ImmutableDocument implements DocumentReadAccessors {
         }
 
         @Override
-        public void setUrl(URI value) {
+        public void setUrl(URL value) {
             this.url = value;
         }
 

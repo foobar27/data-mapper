@@ -1,17 +1,17 @@
 package data.refinery.boilerplate;
 
-import java.net.URI;
+import java.net.URL;
 import java.time.ZonedDateTime;
 
 public final class DocumentPojo implements DocumentReadWriteAccessors {
 
-    private URI url;
+    private URL url;
     private ZonedDateTime publicationDate;
     private String title;
     private String content;
 
     @Override
-    public URI getUrl() {
+    public URL getUrl() {
         return url;
     }
 
@@ -31,7 +31,7 @@ public final class DocumentPojo implements DocumentReadWriteAccessors {
     }
 
     @Override
-    public void setUrl(URI value) {
+    public void setUrl(URL value) {
         this.url = value;
     }
 
