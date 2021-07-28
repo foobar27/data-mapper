@@ -4,7 +4,6 @@ import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +21,14 @@ public abstract class AbstractEntityWithEnrichments implements EntityWithEnrichm
         this.schema = checkNotNull(schema);
     }
 
-    protected ValueOrEnrichment register(Field field) {
+    protected <T> TypedValueOrEnrichment<T> register(Field field) {
         if (fields.containsKey(field)) {
             throw new IllegalArgumentException("Duplicate field: " + field);
         }
         checkArgument(schema.getFields().contains(field), "schema %s must contain field %s", schema, field);
         ValueOrEnrichment result = new ValueOrEnrichment(field);
         fields.put(field, result);
-        return result;
+        return new TypedValueOrEnrichment<>(result);
     }
 
     @Override
