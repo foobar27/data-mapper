@@ -55,12 +55,12 @@ public class PipelineEngineTest {
     @Test
     public void calculateChains() throws ExecutionException, InterruptedException {
 
-        Field a0 = new NamedField("a0");
-        Field a1 = new NamedField("a1");
-        Field a2 = new NamedField("a2");
-        Field b0 = new NamedField("b0");
-        Field b1 = new NamedField("b1");
-        Field b2 = new NamedField("b2");
+        NamedField a0 = new NamedField("a0");
+        NamedField a1 = new NamedField("a1");
+        NamedField a2 = new NamedField("a2");
+        NamedField b0 = new NamedField("b0");
+        NamedField b1 = new NamedField("b1");
+        NamedField b2 = new NamedField("b2");
         EntitySchema schema = new NamedEntitySchema("ChainedEntity", ImmutableList.of(a0, a1, a2, b0, b1, b2));
 
         AppendConstantCalculationDefinition.InputSchema inputSchema = AppendConstantCalculationDefinition.inputSchema();
@@ -133,7 +133,7 @@ public class PipelineEngineTest {
     public void calculateDeepChain() throws ExecutionException, InterruptedException {
         // Similar like calculateChains, but we now use a deep chain to see if we get a stack overflow (and we only have 1 chain).
         int numberOfFields = 200;
-        List<Field> fields = new ArrayList<>();
+        List<NamedField> fields = new ArrayList<>();
         for (int i = 0; i < numberOfFields; ++i) {
             fields.add(new NamedField("a" + i));
         }

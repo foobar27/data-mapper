@@ -11,13 +11,13 @@ public class EntityMappingViewTest {
 
     @Test
     public void viewAccessors() {
-        Field fieldA1 = new NamedField("A1");
-        Field fieldA2 = new NamedField("A2");
+        NamedField fieldA1 = new NamedField("A1");
+        NamedField fieldA2 = new NamedField("A2");
         EntitySchema schemaA = new NamedEntitySchema("A", ImmutableList.of(fieldA1, fieldA2));
 
-        Field fieldB1 = new NamedField("B1");
-        Field fieldB2 = new NamedField("B2");
-        Field fieldB3 = new NamedField("B3");
+        NamedField fieldB1 = new NamedField("B1");
+        NamedField fieldB2 = new NamedField("B2");
+        NamedField fieldB3 = new NamedField("B3");
         EntitySchema schemaB = new NamedEntitySchema("B", ImmutableList.of(fieldB1, fieldB2, fieldB3));
 
         EntityMapping mapping = ImmutableEntityMapping.newBuilder(schemaA, schemaB)
