@@ -1,8 +1,8 @@
 # Nomenclature
 
-- Field: a field of an entity; must be unique (e.g. two different
+- EntitySchema: describes the fields of an entity
+- Field: part of an EntitySchema; must be globally unique (e.g. two different
   entities cannot share the same fields)
-- Entity: composed of multiple fields
 - CalculationDefinition: a description of a calculationDefinition with zero or more inputs 
   and one or more outputs. Calculations can be serialized and stored
   in a database.
