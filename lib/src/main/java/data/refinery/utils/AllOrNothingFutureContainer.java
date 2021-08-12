@@ -42,16 +42,16 @@ public class AllOrNothingFutureContainer<V> {
      */
     public synchronized CompletableFuture<V> add(Supplier<CompletableFuture<V>> futureSupplier) {
         if (failed) {
-            return CompletableFuture.failedFuture(new CancellationException());
+            return Java8Compat.failedFuture(new CancellationException());
         } else {
             CompletableFuture<V> future = futureSupplier.get();
             this.futures.add(future);
-            future.exceptionallyAsync(
+            future.exceptionally/*Async*/(
                     t -> {
                         handleException(t);
                         return null;
-                    },
-                    exceptionHandlerExecutor);
+                    }/*,
+                    exceptionHandlerExecutor*/);
             return future;
         }
 

@@ -33,15 +33,15 @@ public final class TestableFutures<K, V> {
         CompletableFuture<Void> unblockingFuture = new CompletableFuture<>();
         futures.put(key, unblockingFuture);
         unblockingFuture.thenRunAsync(() -> resultFuture.complete(valueSupplier.get()), executor);
-        unblockingFuture.exceptionallyAsync(t -> {
+        unblockingFuture.exceptionally/*Async*/(t -> {
             // In case the unblockingFuture has been cancelled, we receive a CancellationException here.
             resultFuture.completeExceptionally(t);
             return null;
-        }, executor);
-        resultFuture.exceptionallyAsync(t -> {
+        }/*, executor*/);
+        resultFuture.exceptionally/*Async*/(t -> {
             unblockingFuture.completeExceptionally(t);
             return null;
-        }, executor);
+        }/*, executor*/);
         unblockingFuture.whenCompleteAsync(
                 (v, t) -> futures.remove(key, unblockingFuture),
                 executor);

@@ -3,6 +3,7 @@ package data.refinery.pipeline;
 import data.refinery.schema.EntityFieldReadWriteAccessor;
 import data.refinery.schema.EntitySchema;
 import data.refinery.schema.Field;
+import data.refinery.utils.Java8Compat;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public abstract class AbstractEntityWithEnrichments implements EntityWithEnrichm
     public List<Enrichment> getEnrichments() {
         return fields.values()
                 .stream()
-                .flatMap(x -> x.asEnrichment().stream())
+                .flatMap(x -> Java8Compat.optionalToStream(x.asEnrichment()))
                 .collect(Collectors.toList());
     }
 
