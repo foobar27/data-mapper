@@ -2,6 +2,9 @@ package com.github.foobar27.datamapper.utils;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class Java8Compat {

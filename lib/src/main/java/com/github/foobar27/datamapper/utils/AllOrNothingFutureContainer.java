@@ -46,12 +46,11 @@ public class AllOrNothingFutureContainer<V> {
         } else {
             CompletableFuture<V> future = futureSupplier.get();
             this.futures.add(future);
-            future.exceptionally/*Async*/(
-                    t -> {
-                        handleException(t);
-                        return null;
-                    }/*,
-                    exceptionHandlerExecutor*/);
+            future.whenCompleteAsync((result, ex) -> {
+                if (ex != null) {
+                    handleException(ex);
+                }
+            }, exceptionHandlerExecutor);
             return future;
         }
 
