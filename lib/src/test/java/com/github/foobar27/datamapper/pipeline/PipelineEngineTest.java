@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 
 public class PipelineEngineTest {
 
-    private final CalculationFactory concatCalculationFactory = CalculationFactory.newBuilder()
+    private final CalculationFactory concatCalculationFactory = DefaultCalculationFactory.newBuilder()
             .register(ConcatStringsCalculationDefinition.getInstance(),
                     new ConcatStringsCalculationImplementation(MoreExecutors.directExecutor())
                             .enableAutoApply())
@@ -132,7 +132,7 @@ public class PipelineEngineTest {
         entity.setValueOfField(a0, "A");
         entity.setValueOfField(b0, "B");
 
-        CalculationFactory calculationFactory = CalculationFactory.newBuilder()
+        CalculationFactory calculationFactory = DefaultCalculationFactory.newBuilder()
                 .register(AppendConstantCalculationDefinition.getInstance(),
                         new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
@@ -186,7 +186,7 @@ public class PipelineEngineTest {
         SimpleEntity entity = new SimpleEntity(schema);
         entity.setValueOfField(fields.get(0), "A");
 
-        CalculationFactory calculationFactory = CalculationFactory.newBuilder()
+        CalculationFactory calculationFactory = DefaultCalculationFactory.newBuilder()
                 .register(AppendConstantCalculationDefinition.getInstance(),
                         new AppendConstantCalculationImplementation(MoreExecutors.directExecutor())
                                 .enableAutoApply())
