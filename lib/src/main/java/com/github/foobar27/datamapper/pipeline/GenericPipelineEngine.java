@@ -68,7 +68,7 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
                 if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
                     // All dependencies satisfied
                     pendingFutures.add(() ->
-                            enrichment.apply(result, calculationFactory)
+                            applyEnrichment(enrichment)
                                     // Recursion!
                                     .thenApplyAsync(output -> {
                                                 finishEnrichment(enrichmentIndex, output);
@@ -78,6 +78,10 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
                 }
                 ++index;
             }
+        }
+
+        private CompletableFuture<EntityFieldReadAccessor> applyEnrichment(Enrichment enrichment) {
+            return enrichment.apply(result, calculationFactory);
         }
 
         synchronized void finishEnrichment(int index, EntityFieldReadAccessor enrichmentOutput) {
