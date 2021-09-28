@@ -80,7 +80,7 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
             }
         }
 
-        private CompletableFuture<EntityFieldReadAccessor> applyEnrichment(Enrichment enrichment) {
+        private synchronized CompletableFuture<EntityFieldReadAccessor> applyEnrichment(Enrichment enrichment) {
             return enrichment.apply(result, calculationFactory);
         }
 
