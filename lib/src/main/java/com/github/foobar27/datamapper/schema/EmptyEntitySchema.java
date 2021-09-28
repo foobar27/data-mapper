@@ -6,7 +6,7 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-final class EmptyEntitySchema implements EntitySchema {
+public final class EmptyEntitySchema implements EntitySchema {
 
     private static final EmptyEntitySchema instance = new EmptyEntitySchema();
 
