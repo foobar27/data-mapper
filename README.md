@@ -16,3 +16,10 @@
 - EntityMapping: reversible mapping
 - Adapter: wrapper for a calculationDefinition (which maps entity fields to
   the input, and output fields to the entity fields)
+
+# Publish
+
+```
+./gradlew publishToSonatype closeSonatypeStagingRepository
+```
+

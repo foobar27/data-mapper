@@ -12,17 +12,20 @@ plugins {
 }
 
 group = "com.github.foobar27"
-version = "0.1-SNAPSHOT"
+version = "0.1.1"
 
-apply plugin: 'java'
+apply plugin: 'signing'
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
+signing {
+    sign configurations.archives
 }
+
 
 
 compileJava {
@@ -34,6 +37,8 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+apply plugin: 'signing'
 
 dependencies {
     // Use JUnit Jupiter for testing.
@@ -49,18 +54,45 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = 'data-mapper'
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-            artifact javadocJar {
-                classifier "javadoc"
+            from(components.java)
+            groupId project.group
+            artifactId "data-mapper"
+            version project.version
+            pom {
+                name = 'Data Mapper'
+                description = 'A data mapping toolbox'
+                url = 'https://github.com/foobar27/data-mapper'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'foobar27'
+                        name = 'Sebastien Wagener'
+                        email = 'sebastien.wagener@gmail.com'
+                    }
+                }
+                issueManagement {
+                    system = 'github'
+                    url = 'https://github.com/foobar27/data-mapper/issues'
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/foobar27/data-mapper.git'
+                    developerConnection = 'scm:git:ssh://github.com:foobar27/data-mapper.git'
+                    url = 'http://github.com/foobar27/data-mapper/tree/master'
+                }
             }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
