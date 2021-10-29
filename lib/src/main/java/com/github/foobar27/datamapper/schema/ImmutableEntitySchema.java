@@ -49,7 +49,7 @@ public class ImmutableEntitySchema implements EntitySchema {
         }
 
         public Builder addField(Field field) {
-            checkArgument(!fields.contains(field), "Duplicate field", field);
+            checkArgument(!fields.contains(field), "Duplicate field %s", field);
             fields.add(field);
             return this;
         }
