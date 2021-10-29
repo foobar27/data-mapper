@@ -54,7 +54,7 @@ public class ImmutableEntitySchema implements EntitySchema {
             return this;
         }
 
-        public Builder addAllFields(Iterable<Field> fields) {
+        public Builder addAllFields(Iterable<? extends Field> fields) {
             fields.forEach(this::addField);
             return this;
         }
