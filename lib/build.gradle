@@ -43,7 +43,7 @@ apply plugin: 'signing'
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
-    // implementation 'org.hamcrest:hamcrest:2.2' // TODO should be in a separate package
+    testImplementation 'org.hamcrest:hamcrest:2.2' // TODO should be in a separate package (for implementation)
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     api 'com.google.guava:guava:28.1-jre'
