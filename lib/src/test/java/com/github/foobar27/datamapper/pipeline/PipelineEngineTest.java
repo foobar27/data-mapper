@@ -10,6 +10,7 @@ import com.github.foobar27.datamapper.schema.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -181,6 +182,7 @@ public class PipelineEngineTest {
                     parameters);
             allEnrichments.add(enrichment);
         }
+        Collections.shuffle(allEnrichments);
         PipelineDefinition enrichments = new PipelineDefinition(schema, allEnrichments);
 
         SimpleEntity entity = new SimpleEntity(schema);
