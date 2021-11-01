@@ -91,6 +91,10 @@ public final class PipelineDefinition {
         return allOutputFields;
     }
 
+    public EntitySchema getInputSchema() {
+        return inputSchema;
+    }
+
     public EntitySchema getFixedSchema() {
         return fixedSchema;
     }

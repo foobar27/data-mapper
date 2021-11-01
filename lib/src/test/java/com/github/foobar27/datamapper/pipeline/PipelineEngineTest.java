@@ -153,8 +153,7 @@ public class PipelineEngineTest {
         assertThat(output.getValueOfField(b2), is("BXY"));
     }
 
-    @Test
-    public void calculateDeepChain() throws ExecutionException, InterruptedException {
+    private PipelineDefinition buildDeepChain() {
         // Similar like calculateChains, but we now use a deep chain to see if we get a stack overflow (and we only have 1 chain).
         int numberOfFields = 200;
         List<NamedField> fields = new ArrayList<>();
@@ -183,9 +182,15 @@ public class PipelineEngineTest {
             allEnrichments.add(enrichment);
         }
         Collections.shuffle(allEnrichments);
-        PipelineDefinition enrichments = new PipelineDefinition(schema, allEnrichments);
+        return new PipelineDefinition(schema, allEnrichments);
+    }
 
-        SimpleEntity entity = new SimpleEntity(schema);
+    @Test
+    public void calculateDeepChain() throws ExecutionException, InterruptedException {
+        PipelineDefinition enrichments = buildDeepChain();
+
+        List<Field> fields = enrichments.getInputSchema().getFields();
+        SimpleEntity entity = new SimpleEntity(enrichments.getFixedSchema());
         entity.setValueOfField(fields.get(0), "A");
 
         CalculationFactory calculationFactory = DefaultCalculationFactory.newBuilder()
@@ -198,13 +203,13 @@ public class PipelineEngineTest {
                 .createPipelineEngine(
                         enrichments,
                         calculationFactory,
-                        new SimpleEntityFactory(schema),
+                        new SimpleEntityFactory(enrichments.getInputSchema()),
                         MoreExecutors.directExecutor());
         for (int i = 0; i < 1000; ++i) {
             EntityFieldReadAccessor output = engine.process(entity).get();
             assertThat(output.getValueOfField(fields.get(0)), is("A"));
             assertThat(output.getValueOfField(fields.get(1)), is("A"));
-            assertThat(output.getValueOfField(fields.get(numberOfFields - 1)), is("A"));
+            assertThat(output.getValueOfField(fields.get(fields.size() - 1)), is("A"));
         }
         System.out.printf("Took: %sms%n", sw.elapsed(TimeUnit.MILLISECONDS));
     }
