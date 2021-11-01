@@ -189,7 +189,7 @@ public class PipelineEngineTest {
     public void calculateDeepChain() throws ExecutionException, InterruptedException {
         PipelineDefinition pipelineDefinition = buildDeepChain();
 
-        List<Field> fields = pipelineDefinition.getInputSchema().getFields();
+        List<? extends Field> fields = pipelineDefinition.getInputSchema().getFields();
         SimpleEntity entity = new SimpleEntity(pipelineDefinition.getFixedSchema());
         entity.setValueOfField(fields.get(0), "A");
 

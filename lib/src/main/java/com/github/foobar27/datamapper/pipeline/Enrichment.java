@@ -19,7 +19,7 @@ public interface Enrichment {
                 .apply(result, getParameters());
     }
 
-    default List<Field> getInputFields() {
+    default List<? extends Field> getInputFields() {
         return getMappedCalculation()
                 .getMapping()
                 .getLeftMapping()
@@ -27,7 +27,7 @@ public interface Enrichment {
                 .getFields();
     }
 
-    default List<Field> getOutputFields() {
+    default List<? extends Field> getOutputFields() {
         return getMappedCalculation()
                 .getMapping()
                 .getRightMapping()

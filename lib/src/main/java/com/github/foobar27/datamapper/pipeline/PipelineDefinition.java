@@ -37,7 +37,7 @@ public final class PipelineDefinition {
         this.enrichmentGraph = buildEnrichmentGraph(enrichments);
     }
 
-    private static <T> boolean intersect(List<T> left, List<T> right) {
+    private static <T> boolean intersect(List<? extends T> left, List<? extends T> right) {
         return left.stream().anyMatch(right::contains);
     }
 
