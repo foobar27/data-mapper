@@ -31,11 +31,11 @@ public final class NamedEntitySchema implements EntitySchema {
     }
 
     @Override
-    public List<NamedField> getFields() {
-        return fields;
+    public List<Field> getFields() {
+        return fields.stream().map(x -> (Field) x).collect(Collectors.toList());
     }
 
-    public NamedField getFieldByLocalName(String localFieldName) {
+    public Field getFieldByLocalName(String localFieldName) {
         String globalFieldName = this.name + "." + localFieldName;
         return fields.stream()
                 .filter(field -> field.getName().equals(globalFieldName))
