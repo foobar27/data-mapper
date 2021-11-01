@@ -12,12 +12,17 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static com.github.foobar27.datamapper.boilerplate.PersonSchema.personSchema;
+import static com.github.foobar27.datamapper.utils.TestUtils.getAssertOnlyElement;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PipelineEngineTest {
 
@@ -214,6 +219,37 @@ public class PipelineEngineTest {
         System.out.printf("Took: %sms%n", sw.elapsed(TimeUnit.MILLISECONDS));
     }
 
-    // TODO test cancellation
+    @Test
+    public void cancelDeepChain() throws InterruptedException {
+        PipelineDefinition pipelineDefinition = buildDeepChain();
+
+        List<Field> fields = pipelineDefinition.getInputSchema().getFields();
+        SimpleEntity entity = new SimpleEntity(pipelineDefinition.getFixedSchema());
+        entity.setValueOfField(fields.get(0), "A");
+
+        AppendConstantCalculationImplementation implementation = new AppendConstantCalculationImplementation(MoreExecutors.directExecutor());
+        CalculationFactory calculationFactory = DefaultCalculationFactory.newBuilder()
+                .register(AppendConstantCalculationDefinition.getInstance(),
+                        implementation)
+                .build();
+        PipelineEngine<SimpleEntity, SimpleEntity> engine = new PipelineEngineFactory()
+                .createPipelineEngine(
+                        pipelineDefinition,
+                        calculationFactory,
+                        new SimpleEntityFactory(pipelineDefinition.getInputSchema()),
+                        MoreExecutors.directExecutor());
+        CompletableFuture<SimpleEntity> output = engine.process(entity);
+        CompletableFuture<Void> firstFuture = getNextFuture(implementation);
+        assertFalse(firstFuture.isCancelled());
+        output.cancel(false);
+        Thread.sleep(100);
+        assertTrue(firstFuture.isCancelled());
+        Thread.sleep(100);
+        assertFalse(implementation.getPendingFutures().hasPendingFutures());
+    }
+
+    private static CompletableFuture<Void> getNextFuture(AppendConstantCalculationImplementation implementation) {
+        return implementation.getPendingFutures().getAndRemoveUnblocker(getAssertOnlyElement(implementation.getPendingFutures().getPendingUnblockers().keys()));
+    }
 
 }

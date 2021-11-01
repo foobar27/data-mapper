@@ -9,9 +9,12 @@ import com.github.foobar27.datamapper.utils.AllOrNothingFutureContainer;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 
+import static com.github.foobar27.datamapper.utils.FutureUtils.thenApplyAsyncWithCancellation;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, OutputBuilderType extends EntityFieldReadWriteAccessor>
@@ -54,6 +57,11 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
             this.enrichmentsTriggered = new BitSet(enrichments.getEnrichments().size());
             this.enrichmentsFinished = new BitSet(enrichments.getEnrichments().size());
             inputEntity.filterFields(knownFields).mergeInto(result);
+            future.whenCompleteAsync((result, ex) -> {
+                if (ex instanceof CancellationException) {
+                    pendingFutures.cancel(false);
+                }
+            }, executor);
             progress();
         }
 
@@ -68,13 +76,14 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
                     enrichmentsTriggered.set(enrichmentIndex);
                     // All dependencies satisfied
                     pendingFutures.add(() ->
-                            applyEnrichment(enrichment)
+                            thenApplyAsyncWithCancellation(
+                                    applyEnrichment(enrichment),
                                     // Recursion!
-                                    .thenApplyAsync(output -> {
-                                                finishEnrichment(enrichmentIndex, output);
-                                                return null;
-                                            },
-                                            executor));
+                                    (output -> {
+                                        finishEnrichment(enrichmentIndex, output);
+                                        return null;
+                                    }),
+                                    executor));
                 }
             }
         }

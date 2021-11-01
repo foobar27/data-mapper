@@ -71,4 +71,40 @@ public class AllOrNothingFutureContainerTest {
         assertThat(exception.get(), is(instanceOf(IOException.class)));
     }
 
+    @Test
+    public void cancelFutures() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> f1 = add("f1");
+        assertTrue(futures.hasPendingFutures());
+        assertFalse(f1.isDone());
+        futures.getAndRemoveUnblocker("f1").complete(null);
+        assertEquals("f1", f1.get());
+
+        CompletableFuture<String> f2 = add("f2");
+        CompletableFuture<String> f3 = add("f3");
+
+        f2.cancel(false);
+
+        assertFalse(f1.isCancelled());
+        assertTrue(f2.isCancelled());
+        assertTrue(f3.isCancelled());
+    }
+
+    @Test
+    public void cancelContainer() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> f1 = add("f1");
+        assertTrue(futures.hasPendingFutures());
+        assertFalse(f1.isDone());
+        futures.getAndRemoveUnblocker("f1").complete(null);
+        assertEquals("f1", f1.get());
+
+        CompletableFuture<String> f2 = add("f2");
+        CompletableFuture<String> f3 = add("f3");
+
+        container.cancel(false);
+
+        assertFalse(f1.isCancelled());
+        assertTrue(f2.isCancelled());
+        assertTrue(f3.isCancelled());
+    }
+
 }
