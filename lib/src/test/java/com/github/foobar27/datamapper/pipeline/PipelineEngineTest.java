@@ -187,10 +187,10 @@ public class PipelineEngineTest {
 
     @Test
     public void calculateDeepChain() throws ExecutionException, InterruptedException {
-        PipelineDefinition enrichments = buildDeepChain();
+        PipelineDefinition pipelineDefinition = buildDeepChain();
 
-        List<Field> fields = enrichments.getInputSchema().getFields();
-        SimpleEntity entity = new SimpleEntity(enrichments.getFixedSchema());
+        List<Field> fields = pipelineDefinition.getInputSchema().getFields();
+        SimpleEntity entity = new SimpleEntity(pipelineDefinition.getFixedSchema());
         entity.setValueOfField(fields.get(0), "A");
 
         CalculationFactory calculationFactory = DefaultCalculationFactory.newBuilder()
@@ -201,9 +201,9 @@ public class PipelineEngineTest {
         Stopwatch sw = Stopwatch.createStarted();
         PipelineEngine<SimpleEntity, SimpleEntity> engine = new PipelineEngineFactory()
                 .createPipelineEngine(
-                        enrichments,
+                        pipelineDefinition,
                         calculationFactory,
-                        new SimpleEntityFactory(enrichments.getInputSchema()),
+                        new SimpleEntityFactory(pipelineDefinition.getInputSchema()),
                         MoreExecutors.directExecutor());
         for (int i = 0; i < 1000; ++i) {
             EntityFieldReadAccessor output = engine.process(entity).get();
