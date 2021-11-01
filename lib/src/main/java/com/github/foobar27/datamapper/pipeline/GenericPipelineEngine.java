@@ -60,12 +60,12 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
         synchronized void progress() {
             int index = 0;
             for (Enrichment enrichment : enrichments.getEnrichments()) {
-                final int enrichmentIndex = index;
+                final int enrichmentIndex = index++;
                 if (enrichmentsTriggered.get(enrichmentIndex)) {
                     continue;
                 }
-                enrichmentsTriggered.set(enrichmentIndex);
                 if (knownFields.containsAll(enrichment.getMappedCalculation().getMapping().getLeftMapping().getMapping().keySet())) {
+                    enrichmentsTriggered.set(enrichmentIndex);
                     // All dependencies satisfied
                     pendingFutures.add(() ->
                             applyEnrichment(enrichment)
@@ -76,7 +76,6 @@ final class GenericPipelineEngine<OutputType extends EntityFieldReadAccessor, Ou
                                             },
                                             executor));
                 }
-                ++index;
             }
         }
 
