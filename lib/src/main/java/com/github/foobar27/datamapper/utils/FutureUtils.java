@@ -20,7 +20,7 @@ public final class FutureUtils {
             if (t instanceof CancellationException) {
                 future.cancel(false);
             }
-        });
+        }, executor);
         return output;
     }
 
