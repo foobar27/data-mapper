@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A dynamic list of CompletableFutures.
  * If one of them fails, every Future is cancelled (including Futures which will be added in the future).
- * Addtionally, a failure will also trigger a user-provided exceptionHandler.
+ * Additionally, a failure will also trigger a user-provided exceptionHandler.
  * <p>
  * Keeps the full history of futures in memory, so you probably don't want to use this for a big amount of futures.
  */
