@@ -30,9 +30,9 @@ public class AllOrNothingFutureContainer<V> {
     }
 
     private synchronized void handleException(Throwable t) {
-        futures.forEach(f -> f.cancel(false));
         exceptionHandler.accept(t);
         failed = true;
+        futures.forEach(f -> f.cancel(false));
     }
 
     /// Does NOT call the exceptionHandler.
@@ -44,7 +44,7 @@ public class AllOrNothingFutureContainer<V> {
     /**
      * Adds a Future to the container.
      * In case the AllOrNothingFutureList is in a failed state, we do not instantiate the future,
-     * but return a failed future immediately.
+     * but return a failed future immediately (the future will be a CancellationException).
      */
     public synchronized CompletableFuture<V> add(Supplier<CompletableFuture<V>> futureSupplier) {
         if (failed) {

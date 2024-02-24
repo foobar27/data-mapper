@@ -62,13 +62,13 @@ public class AllOrNothingFutureContainerTest {
         assertThat(getExceptionNow(f4), is(instanceOf(IOException.class)));
         assertThat(getExceptionNow(f5), is(instanceOf(CancellationException.class)));
 
-        // Add f6 (should fail immediately, future should not even be created)
+        // Add f6 (should fail immediately with a CancellationException, future should not even be created)
         CompletableFuture<String> f6 = add("f6");
         assertThrows(NoSuchElementException.class, () -> futures.getAndRemoveUnblocker("f4"));
         assertThat(getExceptionNow(f6), is(instanceOf(CancellationException.class)));
         assertThat(futures.getPendingUnblockers().keys(), is(empty()));
 
-        assertThat(exception.get(), is(instanceOf(IOException.class)));
+        assertThat(exception.get(), is(instanceOf(CancellationException.class)));
     }
 
     @Test
